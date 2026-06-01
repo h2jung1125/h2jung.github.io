@@ -16,10 +16,15 @@
   input[type=number]:focus,select:focus{outline:none;border-color:#4a7aff}
   select option{background:#060c1a;color:#e0e8ff}
   .substance-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:4px}
-  .sub-btn{padding:5px 4px;font-size:10px;border:1px solid #1e2d55;border-radius:5px;background:#060c1a;color:#7a9acc;cursor:pointer;text-align:center;transition:all .2s;user-select:none;line-height:1.4}
-  .sub-btn.active{border-color:#4a7aff;background:#0f1e44;color:#a0c0ff}
+  .sub-btn{
+    padding:10px 8px;font-size:11px;border:1px solid #1e2d55;border-radius:5px;
+    background:#060c1a;color:#7a9acc;cursor:pointer;text-align:center;
+    transition:all .2s;user-select:none;line-height:1.5;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:64px;
+  }
+  .sub-btn:hover{border-color:#2a3d6a;color:#a0c0ff}
   .sub-btn.active.danger{border-color:#ff4444;background:#2a0f0f;color:#ff9090}
-  .sub-btn.active.warning{border-color:#ffaa00;background:#2a1a00;color:#ffcc66}
   .sim-btn{width:100%;margin-top:12px;padding:10px;background:linear-gradient(135deg,#1a3aff,#0a1a88);border:none;border-radius:6px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.05em;transition:all .2s}
   .sim-btn:hover{background:linear-gradient(135deg,#2a4aff,#1a2a99);transform:translateY(-1px)}
   .reset-btn{width:100%;margin-top:6px;padding:6px;background:transparent;border:1px solid #1e2d55;border-radius:6px;color:#7a9acc;font-size:11px;cursor:pointer}
@@ -48,7 +53,6 @@
   .wada-note{font-size:9px;color:#5a7aaa;margin-top:6px;line-height:1.4}
   .idle-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:#2a3d6a;font-size:12px;pointer-events:none}
   .dose-slider-row{display:flex;align-items:center;gap:6px;margin-top:4px}
-  .dose-slider-row label{margin:0;white-space:nowrap;font-size:10px;width:auto}
   input[type=range]{flex:1;accent-color:#4a7aff}
   .dose-val{font-size:11px;color:#e0e8ff;width:60px;text-align:right;flex-shrink:0}
   @media(max-width:800px){
@@ -97,19 +101,16 @@
   <input type="number" id="inp-weight" value="82" min="40" max="160">
 
   <div style="margin-top:12px">
-    <div class="panel-title" style="margin-top:0">도핑 약물 선택 <span style="font-size:9px;color:#3a5a88;text-transform:none;letter-spacing:0">(중복 선택 가능)</span></div>
+    <div class="panel-title" style="margin-top:0">도핑 약물 선택</div>
     <div class="substance-grid" id="substance-grid">
-      <div class="sub-btn" data-sub="AAS_oral" data-cat="danger" onclick="toggleSub(this)">
-        AAS (스테로이드)<br>
-        <span style="font-size:9px;opacity:.7">단백동화 스테로이드</span><br>
+      <div class="sub-btn" data-sub="AAS_oral" data-cat="danger" onclick="selectSub(this)">
+        <span style="font-weight:600">AAS (스테로이드)</span>
+        <span style="font-size:9px;opacity:.7;margin-top:2px">단백동화 스테로이드</span>
       </div>
-      <div class="sub-btn" data-sub="EPO" data-cat="danger" onclick="toggleSub(this)" style="grid-column:1/-1">
-        EPO (에리스로포이에틴)<br>
-        <span style="font-size:9px;opacity:.7">적혈구 생성 촉진제</span><br>
+      <div class="sub-btn" data-sub="EPO" data-cat="danger" onclick="selectSub(this)">
+        <span style="font-weight:600">EPO</span>
+        <span style="font-size:9px;opacity:.7;margin-top:2px">에리스로포이에틴</span>
       </div>
-    </div>
-    <div id="stack-warning" style="display:none;margin-top:6px;padding:5px 7px;background:#2a1a00;border:1px solid #aa5500;border-radius:5px;font-size:10px;color:#ffaa55">
-      ⚠️ 복수 약물 사용 감지 — 생체 부채 지수 복합 증가
     </div>
   </div>
 
@@ -164,7 +165,6 @@
         <filter id="glow-orange"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glow-yellow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>
-      <!-- Body silhouette -->
       <g opacity=".18" fill="#4a7aff">
         <ellipse cx="200" cy="45" rx="28" ry="34"/>
         <rect x="188" y="74" width="24" height="18" rx="4"/>
@@ -179,7 +179,6 @@
         <path d="M140 408 Q136 440 138 468 Q146 472 158 468 Q162 444 162 418 Z"/>
         <path d="M260 408 Q264 440 262 468 Q254 472 242 468 Q238 444 238 418 Z"/>
       </g>
-      <!-- Organs -->
       <g id="org-heart" style="cursor:pointer" onclick="showOrganInfo('heart')">
         <path d="M190 155 Q185 145 178 148 Q168 150 170 162 Q172 174 190 185 Q208 174 210 162 Q212 150 202 148 Q195 145 190 155Z" fill="#ff3333" opacity=".7"/>
       </g>
@@ -203,7 +202,6 @@
         <path d="M158 165 Q148 170 148 195 Q148 215 162 220 Q172 215 170 195 Q168 175 158 165Z" fill="#dd5566" opacity=".5"/>
         <path d="M242 165 Q252 170 252 195 Q252 215 238 220 Q228 215 230 195 Q232 175 242 165Z" fill="#dd5566" opacity=".5"/>
       </g>
-      <!-- Glow overlays -->
       <g id="glow-overlays" opacity="0" style="transition:opacity .5s">
         <ellipse id="glow-heart" cx="190" cy="168" rx="22" ry="20" fill="none" stroke="#ff3333" stroke-width="3" filter="url(#glow-red)" opacity=".0"/>
         <ellipse id="glow-liver" cx="208" cy="212" rx="26" ry="22" fill="none" stroke="#ffaa00" stroke-width="3" filter="url(#glow-orange)" opacity=".0"/>
@@ -211,18 +209,17 @@
         <ellipse id="glow-endo" cx="200" cy="310" rx="22" ry="14" fill="none" stroke="#aa44ff" stroke-width="2" filter="url(#glow-orange)" opacity=".0"/>
         <ellipse id="glow-brain" cx="200" cy="38" rx="26" ry="22" fill="none" stroke="#44ffcc" stroke-width="2" filter="url(#glow-yellow)" opacity=".0"/>
       </g>
-      <!-- Labels -->
       <g id="body-labels" opacity="0" style="transition:opacity .6s">
         <line x1="210" y1="158" x2="280" y2="140" stroke="#ff3333" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-heart" x="284" y="144" font-size="10" fill="#ff6666" font-family="sans-serif">Heart ▸</text>
+        <text id="lbl-heart" x="284" y="144" font-size="10" fill="#ff6666" font-family="sans-serif">심장 ▸</text>
         <line x1="232" y1="212" x2="280" y2="210" stroke="#ffaa00" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-liver" x="284" y="214" font-size="10" fill="#ffcc44" font-family="sans-serif">Liver ▸</text>
+        <text id="lbl-liver" x="284" y="214" font-size="10" fill="#ffcc44" font-family="sans-serif">간 ▸</text>
         <line x1="168" y1="228" x2="110" y2="235" stroke="#4488ff" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-kidney" x="108" y="239" font-size="10" fill="#66aaff" font-family="sans-serif" text-anchor="end">◂ Kidneys</text>
+        <text id="lbl-kidney" x="108" y="239" font-size="10" fill="#66aaff" font-family="sans-serif" text-anchor="end">◂ 신장</text>
         <line x1="200" y1="322" x2="110" y2="340" stroke="#aa44ff" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-endo" x="108" y="344" font-size="10" fill="#cc88ff" font-family="sans-serif" text-anchor="end">◂ Endocrine</text>
+        <text id="lbl-endo" x="108" y="344" font-size="10" fill="#cc88ff" font-family="sans-serif" text-anchor="end">◂ 내분비</text>
         <line x1="200" y1="20" x2="280" y2="15" stroke="#44ffcc" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-brain" x="284" y="19" font-size="10" fill="#44ffcc" font-family="sans-serif">Brain ▸</text>
+        <text id="lbl-brain" x="284" y="19" font-size="10" fill="#44ffcc" font-family="sans-serif">뇌 ▸</text>
       </g>
     </svg>
   </div>
@@ -256,19 +253,24 @@
 </div>
 
 <script>
-let activeSubs = new Set();
+let selectedSub = null;
 
-function toggleSub(el){
-  const sub=el.dataset.sub,cat=el.dataset.cat;
-  if(activeSubs.has(sub)){activeSubs.delete(sub);el.classList.remove('active','danger','warning')}
-  else{activeSubs.add(sub);el.classList.add('active',cat)}
-  document.getElementById('stack-warning').style.display=activeSubs.size>=2?'block':'none';
+function selectSub(el){
+  // 단일 선택: 이미 선택된 것 클릭하면 해제
+  document.querySelectorAll('.sub-btn').forEach(b=>{
+    b.classList.remove('active','danger');
+  });
+  if(selectedSub === el.dataset.sub){
+    selectedSub = null;
+  } else {
+    selectedSub = el.dataset.sub;
+    el.classList.add('active','danger');
+  }
 }
 
 function resetAll(){
-  activeSubs.clear();
-  document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active','danger','warning'));
-  document.getElementById('stack-warning').style.display='none';
+  selectedSub = null;
+  document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active','danger'));
   document.getElementById('debt-score').textContent='—';
   document.getElementById('debt-grade').textContent='시뮬레이션 전';
   document.getElementById('debt-grade').style.background='#1e2d55';
@@ -290,29 +292,21 @@ function resetAll(){
 function calcRisk(){
   const age=parseInt(document.getElementById('inp-age').value)||24;
   const dur=parseInt(document.getElementById('inp-dur').value)||12;
-  const dose=3; // 고정: High
-  const subs=Array.from(activeSubs);
-  const n=subs.length;
-  if(n===0) return null;
-  const doseM=[0,.4,.7,1.0,1.35,1.8][dose];
+  const dose=3;
+  if(!selectedSub) return null;
+  const subs=[selectedSub];
+  const doseM=1.0;
   const durM=Math.min(1+dur/26,2.2);
-  const stackM=n===1?1:n===2?1.45:n===3?2.0:2.6;
   const ageFactor=age<22?1.3:age>35?1.1:1.0;
   const base={cv:0,hep:0,endo:0,renal:0,neuro:0};
   if(subs.includes('AAS_oral')){base.hep+=55;base.cv+=40;base.endo+=70;base.neuro+=10}
-  if(subs.includes('AAS_inject')){base.hep+=18;base.cv+=45;base.endo+=75;base.neuro+=8}
   if(subs.includes('EPO')){base.cv+=70;base.renal+=30;base.hep+=5;base.neuro+=15}
-  if(subs.includes('HGH')){base.cv+=25;base.hep+=20;base.endo+=35;base.neuro+=20;base.renal+=15}
-  if(subs.includes('SARMs')){base.hep+=30;base.cv+=30;base.endo+=55;base.neuro+=12}
-  if(subs.includes('diuretics')){base.renal+=65;base.cv+=40;base.hep+=10}
-  if(subs.includes('stimulants')){base.cv+=60;base.neuro+=70;base.hep+=15;base.renal+=10}
-  if(subs.includes('beta_blocker')){base.cv+=20;base.neuro+=25;base.endo+=10}
-  const apply=(v)=>Math.min(Math.round(v*doseM*durM*stackM*ageFactor),99);
+  const apply=(v)=>Math.min(Math.round(v*doseM*durM*ageFactor),99);
   const r={};
   for(const k in base) r[k]=apply(base[k]);
   r.total=Math.min(Math.round((r.cv*.35+r.hep*.20+r.endo*.20+r.renal*.15+r.neuro*.10)*1.05),99);
   r.mort=Math.min(Math.round(r.total*.32),95);
-  r.subs=subs;r.dur=dur;r.n=n;
+  r.subs=subs;r.dur=dur;r.n=1;
   return r;
 }
 
@@ -326,17 +320,41 @@ function gradeInfo(t){
 
 function organDetails(r){
   const items=[];
-  if(r.cv>0){const g=gradeInfo(r.cv);let d='LV hypertrophy, atherosclerosis risk';if(r.subs.includes('EPO'))d='Hyperviscosity, thromboembolic events';if(r.subs.includes('stimulants'))d='Arrhythmia, hypertensive crisis';items.push({name:'Heart & Vascular',val:r.cv,g,desc:d,extra:r.cv>60?'Diastolic dysfunction likely':'Vascular stiffness elevated'})}
-  if(r.hep>0){const g=gradeInfo(r.hep);let d='Hepatotoxicity, AST/ALT elevation';if(r.subs.includes('AAS_oral'))d='Peliosis hepatis, cholestasis, fibrosis risk';items.push({name:'Liver',val:r.hep,g,desc:d,extra:r.hep>60?'Liver enzyme: CRITICAL elevation':'AST/ALT: moderate elevation'})}
-  if(r.endo>0){const g=gradeInfo(r.endo);items.push({name:'Endocrine / HPTA',val:r.endo,g,desc:'HPTA suppression, testosterone shutdown',extra:r.endo>60?'Endogenous T: ↓ ~'+Math.round(r.endo*.95)+'%':'HPTA atrophy risk elevated'})}
-  if(r.renal>0){const g=gradeInfo(r.renal);let d='Glomerular hypertension, protein leak';if(r.subs.includes('diuretics'))d='Electrolyte imbalance, dehydration risk';items.push({name:'Kidneys',val:r.renal,g,desc:d,extra:r.renal>60?'eGFR decline projected':'Creatinine elevation possible'})}
-  if(r.neuro>0){const g=gradeInfo(r.neuro);let d='Mood dysregulation, aggression';if(r.subs.includes('stimulants'))d='CNS overstimulation, dependency risk';items.push({name:'Neurological',val:r.neuro,g,desc:d,extra:r.neuro>60?'Psychiatric symptoms likely':'Behavioural changes possible'})}
+  if(r.cv>0){
+    const g=gradeInfo(r.cv);
+    let d='좌심실 비대, 동맥경화 위험';
+    let extra='혈관 경직도 증가';
+    if(r.subs.includes('EPO')){d='혈액 점도 증가, 혈전·뇌졸중 위험';extra=r.cv>60?'심혈관 돌연사 위험 높음':'혈전색전증 주의'}
+    else if(r.cv>60){extra='이완기 기능장애 가능성'}
+    items.push({name:'심장 & 혈관',val:r.cv,g,desc:d,extra});
+  }
+  if(r.hep>0){
+    const g=gradeInfo(r.hep);
+    let d='간독성, AST/ALT 수치 상승';
+    if(r.subs.includes('AAS_oral')) d='간 낭종(peliosis), 담즙 정체, 섬유화 위험';
+    items.push({name:'간 (肝)',val:r.hep,g,desc:d,extra:r.hep>60?'간 효소 수치: 심각한 상승':'AST/ALT: 중등도 상승'});
+  }
+  if(r.endo>0){
+    const g=gradeInfo(r.endo);
+    items.push({name:'내분비계 / HPTA',val:r.endo,g,desc:'HPTA 억제, 내인성 테스토스테론 분비 중단',extra:r.endo>60?'내인성 T 감소: 약 '+Math.round(r.endo*.95)+'%':'HPTA 위축 위험 증가'});
+  }
+  if(r.renal>0){
+    const g=gradeInfo(r.renal);
+    let d='사구체 고혈압, 단백뇨 위험';
+    if(r.subs.includes('diuretics')) d='전해질 불균형, 탈수 위험';
+    items.push({name:'신장 (腎)',val:r.renal,g,desc:d,extra:r.renal>60?'eGFR 감소 예측':'크레아티닌 상승 가능'});
+  }
+  if(r.neuro>0){
+    const g=gradeInfo(r.neuro);
+    let d='기분 조절 장애, 공격성 증가';
+    items.push({name:'신경계',val:r.neuro,g,desc:d,extra:r.neuro>60?'정신과적 증상 가능성 높음':'행동 변화 가능성'});
+  }
   return items;
 }
 
 function simulate(){
   const r=calcRisk();
-  if(!r){alert('약물을 하나 이상 선택해주세요.');return;}
+  if(!r){alert('약물을 하나 선택해주세요.');return;}
   const g=gradeInfo(r.total);
   document.getElementById('debt-score').textContent=r.total;
   document.getElementById('debt-score').style.color=g.col;
@@ -362,7 +380,7 @@ function simulate(){
   document.getElementById('organ-cards').innerHTML=items.map(i=>`<div class="organ-card"><div class="organ-card-title"><span>${i.name}</span><span class="organ-badge" style="background:${i.g.bg};color:${i.g.col}">${i.val}% — ${i.g.label}</span></div><div class="organ-desc">${i.desc}</div><div class="organ-desc" style="margin-top:2px;color:${i.g.col};font-size:9px">${i.extra}</div></div>`).join('');
   const cvRisk=Math.min(Math.round(r.cv*.78),95);
   document.getElementById('clinical-cards').innerHTML=`<div style="text-align:center;margin-bottom:8px"><div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;margin-bottom:4px">심혈관 질환 위험</div><div style="font-size:28px;font-weight:700;color:${gradeInfo(cvRisk).col}">${cvRisk}%</div><div style="font-size:9px;color:#5a7aaa">위험비: ${(cvRisk/22).toFixed(1)}배</div></div><div style="text-align:center"><div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;margin-bottom:4px">10년 사망 위험</div><div style="font-size:28px;font-weight:700;color:${gradeInfo(r.mort).col}">${r.mort}%</div><div style="font-size:9px;color:#5a7aaa">위험비: ${(r.mort/9).toFixed(1)}배</div></div>`;
-  const wadaBan=r.subs.includes('EPO')||r.subs.includes('AAS_oral')||r.subs.includes('AAS_inject')?4:2;
+  const wadaBan=4;
   const recovery=Math.round((r.endo*.06)+(r.hep*.04)+(r.cv*.05));
   const dur=r.dur;
   const total=dur/4+wadaBan*12+recovery;
@@ -378,8 +396,15 @@ function simulate(){
 }
 
 function showOrganInfo(key){
-  const msgs={heart:'심장에 도핑이 미치는 심혈관 위험성을 설명해줘',liver:'AAS 경구 복용의 간독성과 간 손상 메커니즘을 설명해줘',kidney:'EPO와 이뇨제의 신장 위험성을 설명해줘',endocrine:'스테로이드 사용으로 인한 HPTA 억제와 내인성 테스토스테론 감소를 설명해줘',neuro:'도핑 물질의 신경계 및 정신과적 부작용을 설명해줘',lungs:'EPO와 혈액 도핑의 호흡기 위험성을 설명해줘'};
-  alert('장기 클릭: ' + (msgs[key]||key) + '\n\nClauude에서 이 주제를 검색해보세요!');
+  const msgs={
+    heart:'심장에 도핑이 미치는 심혈관 위험성',
+    liver:'AAS 복용의 간독성과 간 손상',
+    kidney:'EPO의 신장 위험성',
+    endocrine:'스테로이드로 인한 HPTA 억제',
+    neuro:'도핑 물질의 신경계 부작용',
+    lungs:'EPO와 혈액 도핑의 호흡기 위험'
+  };
+  alert('💡 장기 클릭됨: ' + (msgs[key]||key) + '\n\nClaude에서 이 주제를 질문해보세요!');
 }
 </script>
 </body>
