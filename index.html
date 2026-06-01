@@ -1,15 +1,22 @@
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bio-Debt Index Dashboard v1.0</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-sans,'Inter',sans-serif)}
-  .dash{display:grid;grid-template-columns:280px 1fr 220px;gap:10px;padding:12px;min-height:700px;background:#0a0e1a;border-radius:12px;color:#e0e8ff}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#050810;min-height:100vh;padding:16px;display:flex;flex-direction:column;align-items:center}
+  h1{color:#4a7aff;font-size:18px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;text-align:center}
+  .dash{display:grid;grid-template-columns:280px 1fr 220px;gap:10px;width:100%;max-width:1100px;min-height:700px;background:#0a0e1a;border-radius:12px;padding:12px;color:#e0e8ff}
   .panel{background:#0f1628;border:1px solid #1e2d55;border-radius:8px;padding:12px}
   .panel-title{font-size:10px;font-weight:600;letter-spacing:.12em;color:#4a7aff;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1e2d55}
   label{font-size:11px;color:#7a9acc;display:block;margin-bottom:3px;margin-top:8px}
   input[type=number],select{width:100%;padding:5px 8px;background:#060c1a;border:1px solid #1e2d55;border-radius:5px;color:#e0e8ff;font-size:12px}
   input[type=number]:focus,select:focus{outline:none;border-color:#4a7aff}
+  select option{background:#060c1a;color:#e0e8ff}
   .substance-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:4px}
-  .sub-btn{padding:5px 4px;font-size:10px;border:1px solid #1e2d55;border-radius:5px;background:#060c1a;color:#7a9acc;cursor:pointer;text-align:center;transition:all .2s;user-select:none}
+  .sub-btn{padding:5px 4px;font-size:10px;border:1px solid #1e2d55;border-radius:5px;background:#060c1a;color:#7a9acc;cursor:pointer;text-align:center;transition:all .2s;user-select:none;line-height:1.4}
   .sub-btn.active{border-color:#4a7aff;background:#0f1e44;color:#a0c0ff}
   .sub-btn.active.danger{border-color:#ff4444;background:#2a0f0f;color:#ff9090}
   .sub-btn.active.warning{border-color:#ffaa00;background:#2a1a00;color:#ffcc66}
@@ -20,7 +27,7 @@
   .center-col{display:flex;flex-direction:column;gap:10px}
   .body-container{position:relative;flex:1;min-height:460px;background:#060c1a;border-radius:8px;border:1px solid #1e2d55;overflow:hidden}
   .debt-meter{background:#0f1628;border:1px solid #1e2d55;border-radius:8px;padding:12px}
-  .debt-score{font-size:42px;font-weight:700;text-align:center;letter-spacing:-.02em;transition:color .5s}
+  .debt-score{font-size:36px;font-weight:700;text-align:center;letter-spacing:-.02em;transition:color .5s}
   .debt-label{text-align:center;font-size:10px;letter-spacing:.1em;color:#4a7aff;text-transform:uppercase;margin-top:2px}
   .debt-grade{text-align:center;font-size:13px;font-weight:600;margin-top:4px;padding:3px 12px;border-radius:20px;display:inline-block;width:100%}
   .bar-row{display:flex;align-items:center;gap:6px;margin-top:6px}
@@ -28,8 +35,7 @@
   .bar-track{flex:1;height:5px;background:#0a0e1a;border-radius:3px;overflow:hidden}
   .bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
   .bar-val{font-size:10px;color:#e0e8ff;width:30px;text-align:right;flex-shrink:0}
-  .organ-card{padding:8px;background:#060c1a;border:1px solid #1e2d55;border-radius:6px;margin-bottom:6px;cursor:pointer;transition:border-color .2s}
-  .organ-card:hover{border-color:#2a3d6a}
+  .organ-card{padding:8px;background:#060c1a;border:1px solid #1e2d55;border-radius:6px;margin-bottom:6px}
   .organ-card-title{font-size:11px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
   .organ-badge{font-size:9px;padding:2px 6px;border-radius:10px;font-weight:600}
   .organ-desc{font-size:10px;color:#5a7aaa;margin-top:3px;line-height:1.4}
@@ -41,101 +47,105 @@
   .tl-lab{font-size:9px;color:#5a7aaa}
   .wada-note{font-size:9px;color:#5a7aaa;margin-top:6px;line-height:1.4}
   .idle-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:#2a3d6a;font-size:12px;pointer-events:none}
-  .idle-msg svg{display:block;margin:0 auto 8px;opacity:.3}
-  select option{background:#060c1a;color:#e0e8ff}
   .dose-slider-row{display:flex;align-items:center;gap:6px;margin-top:4px}
   .dose-slider-row label{margin:0;white-space:nowrap;font-size:10px;width:auto}
   input[type=range]{flex:1;accent-color:#4a7aff}
-  .dose-val{font-size:11px;color:#e0e8ff;width:50px;text-align:right}
-  .stack-badge{font-size:9px;padding:1px 5px;background:#1e2d55;border-radius:3px;color:#7a9acc;margin-left:4px}
+  .dose-val{font-size:11px;color:#e0e8ff;width:60px;text-align:right;flex-shrink:0}
+  @media(max-width:800px){
+    .dash{grid-template-columns:1fr;min-height:auto}
+    body{padding:8px}
+  }
 </style>
+</head>
+<body>
+<h1>⚠ 생체 부채 지수 (Bio-Debt Index) Dashboard v1.0</h1>
+<div style="font-size:11px;color:#3a5a88;text-align:center;margin-bottom:12px;max-width:700px">
+  본 시뮬레이터는 <strong style="color:#4a7aff">교육 목적 전용</strong>입니다. 위험 수치는 공개된 약리학 문헌을 기반으로 추정된 값이며, 의학적 조언을 대체하지 않습니다.
+</div>
 
 <div class="dash">
 
-<!-- LEFT: INPUT PANEL -->
+<!-- LEFT PANEL -->
 <div class="panel">
-  <div class="panel-title">User Input</div>
+  <div class="panel-title">신체 정보 입력</div>
 
-  <label>Age</label>
+  <label>나이 (세)</label>
   <input type="number" id="inp-age" value="24" min="16" max="60">
 
-  <label>Sex</label>
+  <label>성별</label>
   <select id="inp-sex">
-    <option value="M">Male</option>
-    <option value="F">Female</option>
+    <option value="M">남성</option>
+    <option value="F">여성</option>
   </select>
 
-  <label>Sport / Activity</label>
+  <label>종목</label>
   <select id="inp-sport">
-    <option value="weightlifting">Weightlifting</option>
-    <option value="cycling">Cycling (Endurance)</option>
-    <option value="sprint">Sprinting / Track</option>
-    <option value="swimming">Swimming</option>
-    <option value="combat">Combat Sports</option>
-    <option value="none">Non-competitive</option>
+    <option value="weightlifting">역도 / 파워리프팅</option>
+    <option value="cycling">사이클 (지구력)</option>
+    <option value="sprint">육상 단거리</option>
+    <option value="swimming">수영</option>
+    <option value="combat">격투기 / 복싱</option>
+    <option value="none">비경쟁 / 일반</option>
   </select>
 
-  <label>Height (cm)</label>
+  <label>신장 (cm)</label>
   <input type="number" id="inp-height" value="178" min="150" max="220">
 
-  <label>Weight (kg)</label>
+  <label>체중 (kg)</label>
   <input type="number" id="inp-weight" value="82" min="40" max="160">
 
-  <label>Body Fat (%)</label>
-  <input type="number" id="inp-bf" value="14" min="3" max="45">
-
   <div style="margin-top:12px">
-    <div class="panel-title" style="margin-top:0">Substances</div>
+    <div class="panel-title" style="margin-top:0">도핑 약물 선택 <span style="font-size:9px;color:#3a5a88;text-transform:none;letter-spacing:0">(중복 선택 가능)</span></div>
     <div class="substance-grid" id="substance-grid">
-      <div class="sub-btn" data-sub="AAS_oral" data-cat="danger" onclick="toggleSub(this)">AAS (Oral)<br><span style="font-size:9px;opacity:.7">17α-alkylated</span></div>
-      <div class="sub-btn" data-sub="AAS_inject" data-cat="warning" onclick="toggleSub(this)">AAS (Injectable)<br><span style="font-size:9px;opacity:.7">Testosterone Est.</span></div>
-      <div class="sub-btn" data-sub="EPO" data-cat="danger" onclick="toggleSub(this)">EPO<br><span style="font-size:9px;opacity:.7">Erythropoietin</span></div>
-      <div class="sub-btn" data-sub="HGH" data-cat="warning" onclick="toggleSub(this)">HGH<br><span style="font-size:9px;opacity:.7">Growth Hormone</span></div>
-      <div class="sub-btn" data-sub="SARMs" data-cat="warning" onclick="toggleSub(this)">SARMs<br><span style="font-size:9px;opacity:.7">RAD-140 / LGD</span></div>
-      <div class="sub-btn" data-sub="diuretics" data-cat="danger" onclick="toggleSub(this)">Diuretics<br><span style="font-size:9px;opacity:.7">Furosemide</span></div>
-      <div class="sub-btn" data-sub="stimulants" data-cat="warning" onclick="toggleSub(this)">Stimulants<br><span style="font-size:9px;opacity:.7">Amphetamine</span></div>
-      <div class="sub-btn" data-sub="beta_blocker" data-cat="warning" onclick="toggleSub(this)">Beta-blockers<br><span style="font-size:9px;opacity:.7">Propranolol</span></div>
+      <div class="sub-btn" data-sub="AAS_oral" data-cat="danger" onclick="toggleSub(this)">
+        AAS — 경구형<br>
+        <span style="font-size:9px;opacity:.7">단백동화 스테로이드</span><br>
+        <span style="font-size:9px;color:#ff7777">간독성 高</span>
+      </div>
+      <div class="sub-btn" data-sub="AAS_inject" data-cat="warning" onclick="toggleSub(this)">
+        AAS — 주사형<br>
+        <span style="font-size:9px;opacity:.7">테스토스테론 에스테르</span><br>
+        <span style="font-size:9px;color:#ffbb44">심혈관 위험</span>
+      </div>
+      <div class="sub-btn" data-sub="EPO" data-cat="danger" onclick="toggleSub(this)" style="grid-column:1/-1">
+        EPO (에리스로포이에틴)<br>
+        <span style="font-size:9px;opacity:.7">적혈구 생성 촉진 · 혈전·뇌졸중 위험</span><br>
+        <span style="font-size:9px;color:#ff7777">심혈관 사망 위험 高</span>
+      </div>
     </div>
-
     <div id="stack-warning" style="display:none;margin-top:6px;padding:5px 7px;background:#2a1a00;border:1px solid #aa5500;border-radius:5px;font-size:10px;color:#ffaa55">
-      ⚠️ Stacking detected — Bio-Debt multiplied
+      ⚠️ 복수 약물 사용 감지 — 생체 부채 지수 복합 증가
     </div>
   </div>
 
-  <label>Duration (weeks)</label>
+  <label>복용 기간 (주)</label>
   <div class="dose-slider-row">
-    <input type="range" id="inp-dur" min="2" max="52" value="12" oninput="document.getElementById('dur-val').textContent=this.value+' wk'">
-    <span class="dose-val" id="dur-val">12 wk</span>
+    <input type="range" id="inp-dur" min="2" max="52" value="12" oninput="document.getElementById('dur-val').textContent=this.value+' 주'">
+    <span class="dose-val" id="dur-val">12 주</span>
   </div>
 
-  <label>Dose intensity</label>
-  <div class="dose-slider-row">
-    <input type="range" id="inp-dose" min="1" max="5" value="3" oninput="document.getElementById('dose-val').textContent=['Low','Moderate','High','Very High','Supra'][this.value-1]">
-    <span class="dose-val" id="dose-val">High</span>
-  </div>
-
-  <button class="sim-btn" onclick="simulate()">▶ SIMULATE</button>
-  <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
+  <button class="sim-btn" onclick="simulate()">▶ 시뮬레이션 실행</button>
+  <button class="reset-btn" onclick="resetAll()">↺ 초기화</button>
 </div>
 
-<!-- CENTER: BODY + DEBT METER -->
+<!-- CENTER PANEL -->
 <div class="center-col">
   <div class="debt-meter">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center">
       <div>
-        <div class="debt-score" id="debt-score" style="font-size:36px;color:#2a4aff">—</div>
-        <div class="debt-label">Bio-Debt Index</div>
-        <div style="margin-top:4px"><span class="debt-grade" id="debt-grade" style="background:#1e2d55;color:#5a7aaa">Not Simulated</span></div>
+        <div class="debt-score" id="debt-score" style="color:#2a4aff">—</div>
+        <div class="debt-label">생체 부채 지수</div>
+        <div style="margin-top:4px"><span class="debt-grade" id="debt-grade" style="background:#1e2d55;color:#5a7aaa">시뮬레이션 전</span></div>
       </div>
       <div>
-        <div class="bar-row"><div class="bar-label">Cardiovascular</div><div class="bar-track"><div class="bar-fill" id="cv-bar" style="width:0%;background:#ff4444"></div></div><div class="bar-val" id="cv-val">—</div></div>
-        <div class="bar-row"><div class="bar-label">Hepatic</div><div class="bar-track"><div class="bar-fill" id="hep-bar" style="width:0%;background:#ffaa00"></div></div><div class="bar-val" id="hep-val">—</div></div>
-        <div class="bar-row"><div class="bar-label">Endocrine</div><div class="bar-track"><div class="bar-fill" id="endo-bar" style="width:0%;background:#aa44ff"></div></div><div class="bar-val" id="endo-val">—</div></div>
-        <div class="bar-row"><div class="bar-label">Renal</div><div class="bar-track"><div class="bar-fill" id="renal-bar" style="width:0%;background:#44aaff"></div></div><div class="bar-val" id="renal-val">—</div></div>
-        <div class="bar-row"><div class="bar-label">Neuro</div><div class="bar-track"><div class="bar-fill" id="neuro-bar" style="width:0%;background:#44ffaa"></div></div><div class="bar-val" id="neuro-val">—</div></div>
+        <div class="bar-row"><div class="bar-label">심혈관</div><div class="bar-track"><div class="bar-fill" id="cv-bar" style="width:0%;background:#ff4444"></div></div><div class="bar-val" id="cv-val">—</div></div>
+        <div class="bar-row"><div class="bar-label">간 (肝)</div><div class="bar-track"><div class="bar-fill" id="hep-bar" style="width:0%;background:#ffaa00"></div></div><div class="bar-val" id="hep-val">—</div></div>
+        <div class="bar-row"><div class="bar-label">내분비계</div><div class="bar-track"><div class="bar-fill" id="endo-bar" style="width:0%;background:#aa44ff"></div></div><div class="bar-val" id="endo-val">—</div></div>
+        <div class="bar-row"><div class="bar-label">신장 (腎)</div><div class="bar-track"><div class="bar-fill" id="renal-bar" style="width:0%;background:#44aaff"></div></div><div class="bar-val" id="renal-val">—</div></div>
+        <div class="bar-row"><div class="bar-label">신경계</div><div class="bar-track"><div class="bar-fill" id="neuro-bar" style="width:0%;background:#44ffaa"></div></div><div class="bar-val" id="neuro-val">—</div></div>
       </div>
       <div style="text-align:center">
-        <div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Mortality Risk</div>
+        <div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">사망 위험도</div>
         <div style="position:relative;width:80px;height:80px;margin:0 auto">
           <svg viewBox="0 0 80 80" width="80" height="80">
             <circle cx="40" cy="40" r="30" fill="none" stroke="#1e2d55" stroke-width="8"/>
@@ -143,91 +153,62 @@
           </svg>
           <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:#e0e8ff" id="mort-pct">—</div>
         </div>
-        <div style="font-size:9px;color:#5a7aaa;margin-top:3px">10-yr projected</div>
+        <div style="font-size:9px;color:#5a7aaa;margin-top:3px">10년 후 예측</div>
       </div>
     </div>
   </div>
 
   <div class="body-container" id="body-container">
     <div class="idle-msg" id="idle-msg">
-      <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#4a7aff" stroke-width="1.5"/><path d="M20 10v10l6 4" fill="none" stroke="#4a7aff" stroke-width="1.5" stroke-linecap="round"/></svg>
-      Enter data and press SIMULATE
+      <svg width="40" height="40" viewBox="0 0 40 40" style="display:block;margin:0 auto 8px;opacity:.3"><circle cx="20" cy="20" r="18" fill="none" stroke="#4a7aff" stroke-width="1.5"/><path d="M20 10v10l6 4" fill="none" stroke="#4a7aff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      데이터 입력 후 시뮬레이션을 실행하세요
     </div>
     <svg id="body-svg" width="100%" height="100%" viewBox="0 0 400 480" style="display:none">
-      <!-- Human body silhouette -->
       <defs>
         <filter id="glow-red"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glow-orange"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glow-yellow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       </defs>
-
-      <!-- Body outline -->
+      <!-- Body silhouette -->
       <g opacity=".18" fill="#4a7aff">
-        <!-- head -->
         <ellipse cx="200" cy="45" rx="28" ry="34"/>
-        <!-- neck -->
         <rect x="188" y="74" width="24" height="18" rx="4"/>
-        <!-- torso -->
         <path d="M155 92 Q140 100 138 160 Q136 220 145 265 Q155 290 200 295 Q245 290 255 265 Q264 220 262 160 Q260 100 245 92 Z"/>
-        <!-- left upper arm -->
         <path d="M140 95 Q118 105 112 150 Q110 170 118 180 Q130 170 138 160 Z"/>
-        <!-- right upper arm -->
         <path d="M260 95 Q282 105 288 150 Q290 170 282 180 Q270 170 262 160 Z"/>
-        <!-- left forearm -->
         <path d="M112 180 Q106 210 108 240 Q116 250 126 245 Q130 220 118 180 Z"/>
-        <!-- right forearm -->
         <path d="M288 180 Q294 210 292 240 Q284 250 274 245 Q270 220 282 180 Z"/>
-        <!-- pelvis -->
         <path d="M148 285 Q142 310 148 340 Q170 345 200 346 Q230 345 252 340 Q258 310 252 285 Z"/>
-        <!-- left thigh -->
         <path d="M148 338 Q138 370 140 410 Q148 420 162 418 Q168 385 162 345 Z"/>
-        <!-- right thigh -->
         <path d="M252 338 Q262 370 260 410 Q252 420 238 418 Q232 385 238 345 Z"/>
-        <!-- left shin -->
         <path d="M140 408 Q136 440 138 468 Q146 472 158 468 Q162 444 162 418 Z"/>
-        <!-- right shin -->
         <path d="M260 408 Q264 440 262 468 Q254 472 242 468 Q238 444 238 418 Z"/>
       </g>
-
-      <!-- ORGANS (interactive, color changes on simulate) -->
-      <!-- Heart -->
+      <!-- Organs -->
       <g id="org-heart" style="cursor:pointer" onclick="showOrganInfo('heart')">
         <path d="M190 155 Q185 145 178 148 Q168 150 170 162 Q172 174 190 185 Q208 174 210 162 Q212 150 202 148 Q195 145 190 155Z" fill="#ff3333" opacity=".7"/>
-        <text x="170" y="145" font-size="9" fill="#ff6666" text-anchor="middle" font-family="var(--font-sans)">♥</text>
       </g>
-
-      <!-- Liver -->
       <g id="org-liver" style="cursor:pointer" onclick="showOrganInfo('liver')">
         <path d="M195 195 Q220 190 232 205 Q235 220 220 230 Q205 235 195 228 Q183 220 183 210 Q183 198 195 195Z" fill="#cc7700" opacity=".65"/>
       </g>
-
-      <!-- Kidney L -->
       <g id="org-kidney-l" style="cursor:pointer" onclick="showOrganInfo('kidney')">
         <ellipse cx="168" cy="230" rx="11" ry="16" fill="#4488ff" opacity=".6"/>
       </g>
-      <!-- Kidney R -->
       <g id="org-kidney-r" style="cursor:pointer" onclick="showOrganInfo('kidney')">
         <ellipse cx="232" cy="230" rx="11" ry="16" fill="#4488ff" opacity=".6"/>
       </g>
-
-      <!-- Testes / Ovaries (endocrine) -->
       <g id="org-endo" style="cursor:pointer" onclick="showOrganInfo('endocrine')">
         <ellipse cx="192" cy="310" rx="9" ry="11" fill="#aa44ff" opacity=".55"/>
         <ellipse cx="208" cy="310" rx="9" ry="11" fill="#aa44ff" opacity=".55"/>
       </g>
-
-      <!-- Brain -->
       <g id="org-brain" style="cursor:pointer" onclick="showOrganInfo('neuro')">
         <ellipse cx="200" cy="38" rx="22" ry="20" fill="#44ffcc" opacity=".35"/>
       </g>
-
-      <!-- Lungs -->
       <g id="org-lungs" style="cursor:pointer" onclick="showOrganInfo('lungs')">
         <path d="M158 165 Q148 170 148 195 Q148 215 162 220 Q172 215 170 195 Q168 175 158 165Z" fill="#dd5566" opacity=".5"/>
         <path d="M242 165 Q252 170 252 195 Q252 215 238 220 Q228 215 230 195 Q232 175 242 165Z" fill="#dd5566" opacity=".5"/>
       </g>
-
-      <!-- Organ glow overlays (shown on simulate) -->
+      <!-- Glow overlays -->
       <g id="glow-overlays" opacity="0" style="transition:opacity .5s">
         <ellipse id="glow-heart" cx="190" cy="168" rx="22" ry="20" fill="none" stroke="#ff3333" stroke-width="3" filter="url(#glow-red)" opacity=".0"/>
         <ellipse id="glow-liver" cx="208" cy="212" rx="26" ry="22" fill="none" stroke="#ffaa00" stroke-width="3" filter="url(#glow-orange)" opacity=".0"/>
@@ -235,30 +216,24 @@
         <ellipse id="glow-endo" cx="200" cy="310" rx="22" ry="14" fill="none" stroke="#aa44ff" stroke-width="2" filter="url(#glow-orange)" opacity=".0"/>
         <ellipse id="glow-brain" cx="200" cy="38" rx="26" ry="22" fill="none" stroke="#44ffcc" stroke-width="2" filter="url(#glow-yellow)" opacity=".0"/>
       </g>
-
-      <!-- Leader lines + labels (shown after simulate) -->
+      <!-- Labels -->
       <g id="body-labels" opacity="0" style="transition:opacity .6s">
         <line x1="210" y1="158" x2="280" y2="140" stroke="#ff3333" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-heart" x="284" y="144" font-size="10" fill="#ff6666" font-family="var(--font-sans)">Heart ▸</text>
-
+        <text id="lbl-heart" x="284" y="144" font-size="10" fill="#ff6666" font-family="sans-serif">Heart ▸</text>
         <line x1="232" y1="212" x2="280" y2="210" stroke="#ffaa00" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-liver" x="284" y="214" font-size="10" fill="#ffcc44" font-family="var(--font-sans)">Liver ▸</text>
-
+        <text id="lbl-liver" x="284" y="214" font-size="10" fill="#ffcc44" font-family="sans-serif">Liver ▸</text>
         <line x1="168" y1="228" x2="110" y2="235" stroke="#4488ff" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-kidney" x="60" y="239" font-size="10" fill="#66aaff" font-family="var(--font-sans)" text-anchor="end">◂ Kidneys</text>
-
+        <text id="lbl-kidney" x="108" y="239" font-size="10" fill="#66aaff" font-family="sans-serif" text-anchor="end">◂ Kidneys</text>
         <line x1="200" y1="322" x2="110" y2="340" stroke="#aa44ff" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-endo" x="60" y="344" font-size="10" fill="#cc88ff" font-family="var(--font-sans)" text-anchor="end">◂ Endocrine</text>
-
+        <text id="lbl-endo" x="108" y="344" font-size="10" fill="#cc88ff" font-family="sans-serif" text-anchor="end">◂ Endocrine</text>
         <line x1="200" y1="20" x2="280" y2="15" stroke="#44ffcc" stroke-width=".8" opacity=".7"/>
-        <text id="lbl-brain" x="284" y="19" font-size="10" fill="#44ffcc" font-family="var(--font-sans)">Brain ▸</text>
+        <text id="lbl-brain" x="284" y="19" font-size="10" fill="#44ffcc" font-family="sans-serif">Brain ▸</text>
       </g>
     </svg>
   </div>
 
-  <!-- CAREER LOSS TIMELINE -->
   <div class="timeline" id="tl-panel" style="display:none">
-    <div class="timeline-title">Career Loss Simulation</div>
+    <div class="timeline-title">커리어 손실 시뮬레이션</div>
     <div class="tl-track" id="tl-track"></div>
     <div class="tl-labels">
       <span class="tl-lab" id="tl-lab1"></span>
@@ -269,32 +244,30 @@
   </div>
 </div>
 
-<!-- RIGHT: ORGAN RISK CARDS -->
+<!-- RIGHT PANEL -->
 <div class="panel" style="overflow-y:auto;max-height:700px">
-  <div class="panel-title">Organ-Specific Risk</div>
-  <div id="organ-cards">
-    <div style="font-size:11px;color:#3a4d6a;text-align:center;padding:20px 0">Run simulation to see<br>organ risk assessment</div>
-  </div>
-
+  <div class="panel-title">장기별 위험도</div>
+  <div id="organ-cards"><div style="font-size:11px;color:#3a4d6a;text-align:center;padding:20px 0">시뮬레이션을 실행하면<br>장기별 위험도가 표시됩니다</div></div>
   <div style="margin-top:12px">
-    <div class="panel-title" style="margin-top:0">Clinical Risks</div>
-    <div id="clinical-cards">
-      <div style="font-size:11px;color:#3a4d6a;text-align:center;padding:10px 0">—</div>
-    </div>
+    <div class="panel-title" style="margin-top:0">임상 위험 지표</div>
+    <div id="clinical-cards"><div style="font-size:11px;color:#3a4d6a;text-align:center;padding:10px 0">—</div></div>
   </div>
 </div>
 
+</div>
+
+<div style="font-size:10px;color:#2a3d5a;text-align:center;margin-top:12px">
+  교육 목적 전용 · 공개된 약리학 문헌 기반 추정치 · 의학적 조언 아님
 </div>
 
 <script>
 let activeSubs = new Set();
 
 function toggleSub(el){
-  const sub = el.dataset.sub;
-  const cat = el.dataset.cat;
+  const sub=el.dataset.sub,cat=el.dataset.cat;
   if(activeSubs.has(sub)){activeSubs.delete(sub);el.classList.remove('active','danger','warning')}
   else{activeSubs.add(sub);el.classList.add('active',cat)}
-  document.getElementById('stack-warning').style.display = activeSubs.size>=2?'block':'none';
+  document.getElementById('stack-warning').style.display=activeSubs.size>=2?'block':'none';
 }
 
 function resetAll(){
@@ -302,7 +275,7 @@ function resetAll(){
   document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active','danger','warning'));
   document.getElementById('stack-warning').style.display='none';
   document.getElementById('debt-score').textContent='—';
-  document.getElementById('debt-grade').textContent='Not Simulated';
+  document.getElementById('debt-grade').textContent='시뮬레이션 전';
   document.getElementById('debt-grade').style.background='#1e2d55';
   document.getElementById('debt-grade').style.color='#5a7aaa';
   ['cv','hep','endo','renal','neuro'].forEach(k=>{
@@ -315,26 +288,22 @@ function resetAll(){
   document.getElementById('idle-msg').style.display='block';
   document.getElementById('body-labels').style.opacity='0';
   document.getElementById('tl-panel').style.display='none';
-  document.getElementById('organ-cards').innerHTML='<div style="font-size:11px;color:#3a4d6a;text-align:center;padding:20px 0">Run simulation to see<br>organ risk assessment</div>';
+  document.getElementById('organ-cards').innerHTML='<div style="font-size:11px;color:#3a4d6a;text-align:center;padding:20px 0">시뮬레이션을 실행하면<br>장기별 위험도가 표시됩니다</div>';
   document.getElementById('clinical-cards').innerHTML='<div style="font-size:11px;color:#3a4d6a;text-align:center;padding:10px 0">—</div>';
 }
 
 function calcRisk(){
   const age=parseInt(document.getElementById('inp-age').value)||24;
-  const bf=parseInt(document.getElementById('inp-bf').value)||14;
   const dur=parseInt(document.getElementById('inp-dur').value)||12;
-  const dose=parseInt(document.getElementById('inp-dose').value)||3;
+  const dose=3; // 고정: High
   const subs=Array.from(activeSubs);
   const n=subs.length;
   if(n===0) return null;
-
   const doseM=[0,.4,.7,1.0,1.35,1.8][dose];
   const durM=Math.min(1+dur/26,2.2);
   const stackM=n===1?1:n===2?1.45:n===3?2.0:2.6;
   const ageFactor=age<22?1.3:age>35?1.1:1.0;
-
   const base={cv:0,hep:0,endo:0,renal:0,neuro:0};
-
   if(subs.includes('AAS_oral')){base.hep+=55;base.cv+=40;base.endo+=70;base.neuro+=10}
   if(subs.includes('AAS_inject')){base.hep+=18;base.cv+=45;base.endo+=75;base.neuro+=8}
   if(subs.includes('EPO')){base.cv+=70;base.renal+=30;base.hep+=5;base.neuro+=15}
@@ -343,163 +312,80 @@ function calcRisk(){
   if(subs.includes('diuretics')){base.renal+=65;base.cv+=40;base.hep+=10}
   if(subs.includes('stimulants')){base.cv+=60;base.neuro+=70;base.hep+=15;base.renal+=10}
   if(subs.includes('beta_blocker')){base.cv+=20;base.neuro+=25;base.endo+=10}
-
   const apply=(v)=>Math.min(Math.round(v*doseM*durM*stackM*ageFactor),99);
   const r={};
   for(const k in base) r[k]=apply(base[k]);
-
-  r.total=Math.min(Math.round((r.cv*0.35+r.hep*0.20+r.endo*0.20+r.renal*0.15+r.neuro*0.10)*1.05),99);
-  r.mort=Math.min(Math.round(r.total*0.32),95);
-  r.subs=subs;r.dur=dur;r.dose=dose;r.n=n;
+  r.total=Math.min(Math.round((r.cv*.35+r.hep*.20+r.endo*.20+r.renal*.15+r.neuro*.10)*1.05),99);
+  r.mort=Math.min(Math.round(r.total*.32),95);
+  r.subs=subs;r.dur=dur;r.n=n;
   return r;
 }
 
 function gradeInfo(t){
-  if(t<20) return{label:'LOW RISK',bg:'#0a2a0a',col:'#44cc44'};
-  if(t<40) return{label:'MODERATE',bg:'#1a2a00',col:'#aadd00'};
-  if(t<60) return{label:'HIGH RISK',bg:'#2a1a00',col:'#ffaa00'};
-  if(t<80) return{label:'CRITICAL',bg:'#2a0a00',col:'#ff5500'};
-  return{label:'EXTREME',bg:'#2a0000',col:'#ff1111'};
+  if(t<20) return{label:'낮음 (LOW)',bg:'#0a2a0a',col:'#44cc44'};
+  if(t<40) return{label:'보통 (MODERATE)',bg:'#1a2a00',col:'#aadd00'};
+  if(t<60) return{label:'높음 (HIGH)',bg:'#2a1a00',col:'#ffaa00'};
+  if(t<80) return{label:'위험 (CRITICAL)',bg:'#2a0a00',col:'#ff5500'};
+  return{label:'극위험 (EXTREME)',bg:'#2a0000',col:'#ff1111'};
 }
 
 function organDetails(r){
   const items=[];
-  if(r.cv>0){
-    const g=gradeInfo(r.cv);
-    let desc='LV hypertrophy, atherosclerosis risk';
-    if(r.subs.includes('EPO')) desc='Hyperviscosity, thromboembolic events';
-    if(r.subs.includes('stimulants')) desc='Arrhythmia, hypertensive crisis';
-    items.push({name:'Heart & Vascular',val:r.cv,g,desc,extra:r.cv>60?'Diastolic dysfunction likely':'Vascular stiffness elevated'});
-  }
-  if(r.hep>0){
-    const g=gradeInfo(r.hep);
-    let desc='Hepatotoxicity, AST/ALT elevation';
-    if(r.subs.includes('AAS_oral')) desc='Peliosis hepatis, cholestasis, fibrosis risk';
-    items.push({name:'Liver',val:r.hep,g,desc,extra:r.hep>60?'Liver enzyme: CRITICAL elevation':'AST/ALT: moderate elevation'});
-  }
-  if(r.endo>0){
-    const g=gradeInfo(r.endo);
-    let desc='HPTA suppression, testosterone shutdown';
-    items.push({name:'Endocrine / HPTA',val:r.endo,g,desc,extra:r.endo>60?'Endogenous T: ↓ ~'+(Math.round(r.endo*0.95))+'%':'HPTA atrophy risk elevated'});
-  }
-  if(r.renal>0){
-    const g=gradeInfo(r.renal);
-    let desc='Glomerular hypertension, protein leak';
-    if(r.subs.includes('diuretics')) desc='Electrolyte imbalance, dehydration risk';
-    items.push({name:'Kidneys',val:r.renal,g,desc,extra:r.renal>60?'eGFR decline projected':'Creatinine elevation possible'});
-  }
-  if(r.neuro>0){
-    const g=gradeInfo(r.neuro);
-    let desc='Mood dysregulation, aggression';
-    if(r.subs.includes('stimulants')) desc='CNS overstimulation, dependency risk';
-    items.push({name:'Neurological',val:r.neuro,g,desc,extra:r.neuro>60?'Psychiatric symptoms likely':'Behavioural changes possible'});
-  }
+  if(r.cv>0){const g=gradeInfo(r.cv);let d='LV hypertrophy, atherosclerosis risk';if(r.subs.includes('EPO'))d='Hyperviscosity, thromboembolic events';if(r.subs.includes('stimulants'))d='Arrhythmia, hypertensive crisis';items.push({name:'Heart & Vascular',val:r.cv,g,desc:d,extra:r.cv>60?'Diastolic dysfunction likely':'Vascular stiffness elevated'})}
+  if(r.hep>0){const g=gradeInfo(r.hep);let d='Hepatotoxicity, AST/ALT elevation';if(r.subs.includes('AAS_oral'))d='Peliosis hepatis, cholestasis, fibrosis risk';items.push({name:'Liver',val:r.hep,g,desc:d,extra:r.hep>60?'Liver enzyme: CRITICAL elevation':'AST/ALT: moderate elevation'})}
+  if(r.endo>0){const g=gradeInfo(r.endo);items.push({name:'Endocrine / HPTA',val:r.endo,g,desc:'HPTA suppression, testosterone shutdown',extra:r.endo>60?'Endogenous T: ↓ ~'+Math.round(r.endo*.95)+'%':'HPTA atrophy risk elevated'})}
+  if(r.renal>0){const g=gradeInfo(r.renal);let d='Glomerular hypertension, protein leak';if(r.subs.includes('diuretics'))d='Electrolyte imbalance, dehydration risk';items.push({name:'Kidneys',val:r.renal,g,desc:d,extra:r.renal>60?'eGFR decline projected':'Creatinine elevation possible'})}
+  if(r.neuro>0){const g=gradeInfo(r.neuro);let d='Mood dysregulation, aggression';if(r.subs.includes('stimulants'))d='CNS overstimulation, dependency risk';items.push({name:'Neurological',val:r.neuro,g,desc:d,extra:r.neuro>60?'Psychiatric symptoms likely':'Behavioural changes possible'})}
   return items;
 }
 
 function simulate(){
   const r=calcRisk();
-  if(!r){alert('Please select at least one substance.');return;}
+  if(!r){alert('약물을 하나 이상 선택해주세요.');return;}
   const g=gradeInfo(r.total);
-
-  // Score + grade
   document.getElementById('debt-score').textContent=r.total;
   document.getElementById('debt-score').style.color=g.col;
   const dg=document.getElementById('debt-grade');
   dg.textContent=g.label;dg.style.background=g.bg;dg.style.color=g.col;
-
-  // Bars
   const bars={cv:r.cv,hep:r.hep,endo:r.endo,renal:r.renal,neuro:r.neuro};
   for(const[k,v] of Object.entries(bars)){
     document.getElementById(k+'-bar').style.width=v+'%';
     document.getElementById(k+'-val').textContent=v+'%';
   }
-
-  // Mortality ring
   const circ=188.5;
   document.getElementById('mort-ring').setAttribute('stroke-dasharray',((r.mort/100)*circ)+' '+circ);
   document.getElementById('mort-pct').textContent=r.mort+'%';
-
-  // Body SVG
   document.getElementById('body-svg').style.display='block';
   document.getElementById('idle-msg').style.display='none';
   document.getElementById('body-labels').style.opacity='1';
   document.getElementById('glow-overlays').style.opacity='1';
-
-  // Organ glow intensities
-  const glowOrgan=(id,v)=>{
-    const el=document.getElementById('glow-'+id);
-    if(el) el.style.opacity=Math.min(v/100,.9).toFixed(2);
-  };
-  glowOrgan('heart',r.cv);
-  glowOrgan('liver',r.hep);
-  glowOrgan('kidney',r.renal);
-  glowOrgan('endo',r.endo);
-  glowOrgan('brain',r.neuro);
-
-  // Update organ label colors
+  const glowOrgan=(id,v)=>{const el=document.getElementById('glow-'+id);if(el)el.style.opacity=Math.min(v/100,.9).toFixed(2)};
+  glowOrgan('heart',r.cv);glowOrgan('liver',r.hep);glowOrgan('kidney',r.renal);glowOrgan('endo',r.endo);glowOrgan('brain',r.neuro);
   const setLbl=(id,v)=>{const g=gradeInfo(v);document.getElementById('lbl-'+id).setAttribute('fill',g.col)};
   setLbl('heart',r.cv);setLbl('liver',r.hep);setLbl('kidney',r.renal);setLbl('endo',r.endo);setLbl('brain',r.neuro);
-
-  // Organ cards
   const items=organDetails(r);
-  document.getElementById('organ-cards').innerHTML=items.map(i=>`
-    <div class="organ-card">
-      <div class="organ-card-title">
-        <span>${i.name}</span>
-        <span class="organ-badge" style="background:${i.g.bg};color:${i.g.col}">${i.val}% — ${i.g.label}</span>
-      </div>
-      <div class="organ-desc">${i.desc}</div>
-      <div class="organ-desc" style="margin-top:2px;color:${i.g.col};font-size:9px">${i.extra}</div>
-    </div>
-  `).join('');
-
-  // Clinical risks
-  const cvRisk=Math.min(Math.round(r.cv*0.78),95);
-  const mortRisk=r.mort;
-  document.getElementById('clinical-cards').innerHTML=`
-    <div style="text-align:center;margin-bottom:8px">
-      <div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;margin-bottom:4px">CARDIOVASCULAR DISEASE</div>
-      <div style="font-size:28px;font-weight:700;color:${gradeInfo(cvRisk).col}">${cvRisk}%</div>
-      <div style="font-size:9px;color:#5a7aaa">Risk Ratio: ${(cvRisk/22).toFixed(1)}×</div>
-    </div>
-    <div style="text-align:center">
-      <div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;margin-bottom:4px">10-YR MORTALITY</div>
-      <div style="font-size:28px;font-weight:700;color:${gradeInfo(mortRisk).col}">${mortRisk}%</div>
-      <div style="font-size:9px;color:#5a7aaa">Risk Ratio: ${(mortRisk/9).toFixed(1)}×</div>
-    </div>
-  `;
-
-  // Timeline
+  document.getElementById('organ-cards').innerHTML=items.map(i=>`<div class="organ-card"><div class="organ-card-title"><span>${i.name}</span><span class="organ-badge" style="background:${i.g.bg};color:${i.g.col}">${i.val}% — ${i.g.label}</span></div><div class="organ-desc">${i.desc}</div><div class="organ-desc" style="margin-top:2px;color:${i.g.col};font-size:9px">${i.extra}</div></div>`).join('');
+  const cvRisk=Math.min(Math.round(r.cv*.78),95);
+  document.getElementById('clinical-cards').innerHTML=`<div style="text-align:center;margin-bottom:8px"><div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;margin-bottom:4px">심혈관 질환 위험</div><div style="font-size:28px;font-weight:700;color:${gradeInfo(cvRisk).col}">${cvRisk}%</div><div style="font-size:9px;color:#5a7aaa">위험비: ${(cvRisk/22).toFixed(1)}배</div></div><div style="text-align:center"><div style="font-size:10px;color:#4a7aff;letter-spacing:.08em;margin-bottom:4px">10년 사망 위험</div><div style="font-size:28px;font-weight:700;color:${gradeInfo(r.mort).col}">${r.mort}%</div><div style="font-size:9px;color:#5a7aaa">위험비: ${(r.mort/9).toFixed(1)}배</div></div>`;
+  const wadaBan=r.subs.includes('EPO')||r.subs.includes('AAS_oral')||r.subs.includes('AAS_inject')?4:2;
+  const recovery=Math.round((r.endo*.06)+(r.hep*.04)+(r.cv*.05));
   const dur=r.dur;
-  const wadaBan=r.subs.includes('EPO')?4:r.subs.includes('AAS_oral')||r.subs.includes('AAS_inject')?4:2;
-  const recovery=Math.round((r.endo*0.06)+(r.hep*0.04)+(r.cv*0.05));
   const total=dur/4+wadaBan*12+recovery;
   const p1=Math.round((dur/4)/total*100);
   const p2=Math.round((wadaBan*12)/total*100);
   const p3=100-p1-p2;
-
-  document.getElementById('tl-track').innerHTML=`
-    <div class="tl-seg" style="flex:${p1};background:#3a2a44;color:#cc88ff;font-size:8px">Use</div>
-    <div class="tl-seg" style="flex:${p2};background:#3a1a0a;color:#ff7733;font-size:8px">BAN</div>
-    <div class="tl-seg" style="flex:${p3};background:#0a2a1a;color:#44cc88;font-size:8px">Recovery</div>
-  `;
-  document.getElementById('tl-lab1').textContent=`Use: ${Math.round(dur/4)} mo`;
-  document.getElementById('tl-lab2').textContent=`WADA Ban: ${wadaBan} yr`;
-  document.getElementById('tl-lab3').textContent=`Total loss: ~${Math.round(total/12*10)/10} yr`;
-  document.getElementById('wada-note').textContent=`Organ recovery estimated ${recovery} months. Total career impact: ~${Math.round(total/12*10)/10} years.`;
+  document.getElementById('tl-track').innerHTML=`<div class="tl-seg" style="flex:${p1};background:#3a2a44;color:#cc88ff;font-size:8px">복용</div><div class="tl-seg" style="flex:${p2};background:#3a1a0a;color:#ff7733;font-size:8px">자격정지</div><div class="tl-seg" style="flex:${p3};background:#0a2a1a;color:#44cc88;font-size:8px">회복</div>`;
+  document.getElementById('tl-lab1').textContent=`복용: ${Math.round(dur/4)} 개월`;
+  document.getElementById('tl-lab2').textContent=`WADA 자격정지: ${wadaBan}년`;
+  document.getElementById('tl-lab3').textContent=`총 손실: 약 ${Math.round(total/12*10)/10}년`;
+  document.getElementById('wada-note').textContent=`장기 회복 예상 ${recovery}개월. 총 커리어 손실: 약 ${Math.round(total/12*10)/10}년.`;
   document.getElementById('tl-panel').style.display='block';
 }
 
 function showOrganInfo(key){
-  const msgs={
-    heart:'What are the cardiovascular risks of doping on the heart?',
-    liver:'Explain hepatotoxicity from AAS and oral steroids',
-    kidney:'What are the renal risks of EPO and diuretics?',
-    endocrine:'Explain HPTA suppression and endocrine shutdown from steroid use',
-    neuro:'What are the neurological and psychiatric effects of doping substances?',
-    lungs:'What respiratory risks are associated with EPO and blood doping?'
-  };
-  if(msgs[key]) sendPrompt(msgs[key]);
+  const msgs={heart:'심장에 도핑이 미치는 심혈관 위험성을 설명해줘',liver:'AAS 경구 복용의 간독성과 간 손상 메커니즘을 설명해줘',kidney:'EPO와 이뇨제의 신장 위험성을 설명해줘',endocrine:'스테로이드 사용으로 인한 HPTA 억제와 내인성 테스토스테론 감소를 설명해줘',neuro:'도핑 물질의 신경계 및 정신과적 부작용을 설명해줘',lungs:'EPO와 혈액 도핑의 호흡기 위험성을 설명해줘'};
+  alert('장기 클릭: ' + (msgs[key]||key) + '\n\nClauude에서 이 주제를 검색해보세요!');
 }
 </script>
+</body>
+</html>
