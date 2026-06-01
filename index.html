@@ -81,7 +81,7 @@
   <label>종목</label>
   <select id="inp-sport">
     <option value="weightlifting">역도 / 파워리프팅</option>
-   <option value="bodybuilding">보디빌딩</option>
+    <option value="bodybuilding">보디빌딩</option>
     <option value="sprint">육상 단거리</option>
     <option value="cycling">사이클 (지구력)</option>
     <option value="endurance">육상 장거리</option>
@@ -100,19 +100,12 @@
     <div class="panel-title" style="margin-top:0">도핑 약물 선택 <span style="font-size:9px;color:#3a5a88;text-transform:none;letter-spacing:0">(중복 선택 가능)</span></div>
     <div class="substance-grid" id="substance-grid">
       <div class="sub-btn" data-sub="AAS_oral" data-cat="danger" onclick="toggleSub(this)">
-        AAS — 경구형<br>
+        AAS (스테로이드)<br>
         <span style="font-size:9px;opacity:.7">단백동화 스테로이드</span><br>
-        <span style="font-size:9px;color:#ff7777">간독성 高</span>
-      </div>
-      <div class="sub-btn" data-sub="AAS_inject" data-cat="warning" onclick="toggleSub(this)">
-        AAS — 주사형<br>
-        <span style="font-size:9px;opacity:.7">테스토스테론 에스테르</span><br>
-        <span style="font-size:9px;color:#ffbb44">심혈관 위험</span>
       </div>
       <div class="sub-btn" data-sub="EPO" data-cat="danger" onclick="toggleSub(this)" style="grid-column:1/-1">
         EPO (에리스로포이에틴)<br>
-        <span style="font-size:9px;opacity:.7">적혈구 생성 촉진 · 혈전·뇌졸중 위험</span><br>
-        <span style="font-size:9px;color:#ff7777">심혈관 사망 위험 高</span>
+        <span style="font-size:9px;opacity:.7">적혈구 생성 촉진제</span><br>
       </div>
     </div>
     <div id="stack-warning" style="display:none;margin-top:6px;padding:5px 7px;background:#2a1a00;border:1px solid #aa5500;border-radius:5px;font-size:10px;color:#ffaa55">
@@ -122,7 +115,7 @@
 
   <label>복용 기간 (주)</label>
   <div class="dose-slider-row">
-    <input type="range" id="inp-dur" min="2" max="52" value="12" oninput="document.getElementById('dur-val').textContent=this.value+' 주'">
+    <input type="range" id="inp-dur" min="1" max="52" value="12" oninput="document.getElementById('dur-val').textContent=this.value+' 주'">
     <span class="dose-val" id="dur-val">12 주</span>
   </div>
 
