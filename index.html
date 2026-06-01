@@ -6,10 +6,11 @@
 <title>Bio-Debt Index Dashboard v1.0</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#050810;min-height:100vh;padding:16px;display:flex;flex-direction:column;align-items:center}
-  h1{color:#4a7aff;font-size:18px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;text-align:center}
-  .dash{display:grid;grid-template-columns:280px 1fr 220px;gap:10px;width:100%;max-width:1100px;background:#0a0e1a;border-radius:12px;padding:12px;color:#e0e8ff}
-  .panel{background:#0f1628;border:1px solid #1e2d55;border-radius:8px;padding:10px}
+  html,body{height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#050810;height:100vh;padding:10px;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+  h1{color:#4a7aff;font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;text-align:center;flex-shrink:0}
+  .dash{display:grid;grid-template-columns:260px 1fr 210px;gap:8px;width:100%;max-width:1100px;background:#0a0e1a;border-radius:12px;padding:10px;color:#e0e8ff;flex:1;min-height:0;overflow:hidden}
+  .panel{background:#0f1628;border:1px solid #1e2d55;border-radius:8px;padding:10px;overflow-y:auto}
   .panel-title{font-size:10px;font-weight:600;letter-spacing:.12em;color:#4a7aff;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1e2d55}
   label{font-size:11px;color:#7a9acc;display:block;margin-bottom:2px;margin-top:6px}
   input[type=number],select{width:100%;padding:5px 8px;background:#060c1a;border:1px solid #1e2d55;border-radius:5px;color:#e0e8ff;font-size:12px}
@@ -29,8 +30,8 @@
   .sim-btn:hover{background:linear-gradient(135deg,#2a4aff,#1a2a99);transform:translateY(-1px)}
   .reset-btn{width:100%;margin-top:6px;padding:6px;background:transparent;border:1px solid #1e2d55;border-radius:6px;color:#7a9acc;font-size:11px;cursor:pointer}
   .reset-btn:hover{border-color:#4a7aff;color:#a0c0ff}
-  .center-col{display:flex;flex-direction:column;gap:8px}
-  .body-container{position:relative;height:320px;min-height:0;background:#060c1a;border-radius:8px;border:1px solid #1e2d55;overflow:hidden}
+  .center-col{display:flex;flex-direction:column;gap:8px;height:100%;min-height:0}
+  .body-container{position:relative;flex:1;min-height:0;background:#060c1a;border-radius:8px;border:1px solid #1e2d55;overflow:hidden}
   .debt-meter{background:#0f1628;border:1px solid #1e2d55;border-radius:8px;padding:10px}
   .debt-score{font-size:32px;font-weight:700;text-align:center;letter-spacing:-.02em;transition:color .5s}
   .debt-label{text-align:center;font-size:10px;letter-spacing:.1em;color:#4a7aff;text-transform:uppercase;margin-top:2px}
@@ -63,7 +64,7 @@
 </head>
 <body>
 <h1>⚠ 생체 부채 지수 (Bio-Debt Index) Dashboard v1.0</h1>
-<div style="font-size:11px;color:#3a5a88;text-align:center;margin-bottom:8px;max-width:700px">
+<div style="font-size:10px;color:#3a5a88;text-align:center;margin-bottom:5px;max-width:700px;flex-shrink:0">
   본 시뮬레이터는 <strong style="color:#4a7aff">교육 목적 전용</strong>입니다. 위험 수치는 공개된 약리학 문헌을 기반으로 추정된 값이며, 의학적 조언을 대체하지 않습니다.
 </div>
 
@@ -155,11 +156,10 @@
   </div>
 
   <div class="body-container" id="body-container">
-    <div class="idle-msg" id="idle-msg">
-      <svg width="40" height="40" viewBox="0 0 40 40" style="display:block;margin:0 auto 8px;opacity:.3"><circle cx="20" cy="20" r="18" fill="none" stroke="#4a7aff" stroke-width="1.5"/><path d="M20 10v10l6 4" fill="none" stroke="#4a7aff" stroke-width="1.5" stroke-linecap="round"/></svg>
-      데이터 입력 후 시뮬레이션을 실행하세요
+    <div class="idle-msg" id="idle-msg" style="top:auto;bottom:8px;transform:translateX(-50%);font-size:10px;opacity:.6">
+      ▲ 시뮬레이션을 실행하면 장기 상태가 변화합니다
     </div>
-    <svg id="body-svg" width="100%" height="100%" viewBox="0 0 400 480" style="display:none">
+    <svg id="body-svg" width="100%" height="100%" viewBox="0 0 400 480" preserveAspectRatio="xMidYMid meet" style="position:absolute;top:0;left:0;width:100%;height:100%">
       <defs>
         <filter id="glow-red"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
         <filter id="glow-orange"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -180,27 +180,27 @@
         <path d="M260 408 Q264 440 262 468 Q254 472 242 468 Q238 444 238 418 Z"/>
       </g>
       <g id="org-heart" style="cursor:pointer" onclick="showOrganInfo('heart')">
-        <path d="M190 155 Q185 145 178 148 Q168 150 170 162 Q172 174 190 185 Q208 174 210 162 Q212 150 202 148 Q195 145 190 155Z" fill="#ff3333" opacity=".7"/>
+        <path id="organ-heart-path" d="M190 155 Q185 145 178 148 Q168 150 170 162 Q172 174 190 185 Q208 174 210 162 Q212 150 202 148 Q195 145 190 155Z" fill="#44cc88" opacity=".8" style="transition:fill 1s ease,opacity 1s ease"/>
       </g>
       <g id="org-liver" style="cursor:pointer" onclick="showOrganInfo('liver')">
-        <path d="M195 195 Q220 190 232 205 Q235 220 220 230 Q205 235 195 228 Q183 220 183 210 Q183 198 195 195Z" fill="#cc7700" opacity=".65"/>
+        <path id="organ-liver-path" d="M195 195 Q220 190 232 205 Q235 220 220 230 Q205 235 195 228 Q183 220 183 210 Q183 198 195 195Z" fill="#88cc44" opacity=".8" style="transition:fill 1s ease,opacity 1s ease"/>
       </g>
       <g id="org-kidney-l" style="cursor:pointer" onclick="showOrganInfo('kidney')">
-        <ellipse cx="168" cy="230" rx="11" ry="16" fill="#4488ff" opacity=".6"/>
+        <ellipse id="organ-kidney-l-path" cx="168" cy="230" rx="11" ry="16" fill="#44aaff" opacity=".85" style="transition:fill 1s ease,opacity 1s ease"/>
       </g>
       <g id="org-kidney-r" style="cursor:pointer" onclick="showOrganInfo('kidney')">
-        <ellipse cx="232" cy="230" rx="11" ry="16" fill="#4488ff" opacity=".6"/>
+        <ellipse id="organ-kidney-r-path" cx="232" cy="230" rx="11" ry="16" fill="#44aaff" opacity=".85" style="transition:fill 1s ease,opacity 1s ease"/>
       </g>
       <g id="org-endo" style="cursor:pointer" onclick="showOrganInfo('endocrine')">
-        <ellipse cx="192" cy="310" rx="9" ry="11" fill="#aa44ff" opacity=".55"/>
-        <ellipse cx="208" cy="310" rx="9" ry="11" fill="#aa44ff" opacity=".55"/>
+        <ellipse id="organ-endo-l-path" cx="192" cy="310" rx="9" ry="11" fill="#88aaff" opacity=".8" style="transition:fill 1s ease,opacity 1s ease"/>
+        <ellipse id="organ-endo-r-path" cx="208" cy="310" rx="9" ry="11" fill="#88aaff" opacity=".8" style="transition:fill 1s ease,opacity 1s ease"/>
       </g>
       <g id="org-brain" style="cursor:pointer" onclick="showOrganInfo('neuro')">
-        <ellipse cx="200" cy="38" rx="22" ry="20" fill="#44ffcc" opacity=".35"/>
+        <ellipse id="organ-brain-path" cx="200" cy="38" rx="22" ry="20" fill="#44ffcc" opacity=".7" style="transition:fill 1s ease,opacity 1s ease"/>
       </g>
       <g id="org-lungs" style="cursor:pointer" onclick="showOrganInfo('lungs')">
-        <path d="M158 165 Q148 170 148 195 Q148 215 162 220 Q172 215 170 195 Q168 175 158 165Z" fill="#dd5566" opacity=".5"/>
-        <path d="M242 165 Q252 170 252 195 Q252 215 238 220 Q228 215 230 195 Q232 175 242 165Z" fill="#dd5566" opacity=".5"/>
+        <path id="organ-lung-l-path" d="M158 165 Q148 170 148 195 Q148 215 162 220 Q172 215 170 195 Q168 175 158 165Z" fill="#88ddcc" opacity=".75" style="transition:fill 1s ease,opacity 1s ease"/>
+        <path id="organ-lung-r-path" d="M242 165 Q252 170 252 195 Q252 215 238 220 Q228 215 230 195 Q232 175 242 165Z" fill="#88ddcc" opacity=".75" style="transition:fill 1s ease,opacity 1s ease"/>
       </g>
       <g id="glow-overlays" opacity="0" style="transition:opacity .5s">
         <ellipse id="glow-heart" cx="190" cy="168" rx="22" ry="20" fill="none" stroke="#ff3333" stroke-width="3" filter="url(#glow-red)" opacity=".0"/>
@@ -248,12 +248,64 @@
 
 </div>
 
-<div style="font-size:10px;color:#2a3d5a;text-align:center;margin-top:12px">
+<div style="font-size:10px;color:#2a3d5a;text-align:center;margin-top:4px;flex-shrink:0">
   교육 목적 전용 · 공개된 약리학 문헌 기반 추정치 · 의학적 조언 아님
 </div>
 
 <script>
 let selectedSub = null;
+
+// 건강한 장기 기본 색상
+const HEALTHY = {
+  heart:  '#44cc88',
+  liver:  '#88cc44',
+  kidneys:'#44aaff',
+  endo:   '#88aaff',
+  brain:  '#44ffcc',
+  lungs:  '#88ddcc'
+};
+
+// 위험도에 따른 색상 보간 (건강→위험)
+function interpolateColor(ratio) {
+  // 0=건강(초록), 1=위험(빨강)
+  const r = Math.round(68  + (255-68)  * ratio);
+  const g = Math.round(204 + (40-204)  * ratio);
+  const b = Math.round(136 + (40-136)  * ratio);
+  return `rgb(${r},${g},${b})`;
+}
+
+function restoreHealthyOrgans(){
+  const s = el => el && (el.style.fill = '');
+  const ids = ['organ-heart-path','organ-liver-path','organ-kidney-l-path',
+    'organ-kidney-r-path','organ-endo-l-path','organ-endo-r-path',
+    'organ-lung-l-path','organ-lung-r-path','organ-brain-path'];
+  const colors = [HEALTHY.heart, HEALTHY.liver, HEALTHY.kidneys, HEALTHY.kidneys,
+    HEALTHY.endo, HEALTHY.endo, HEALTHY.lungs, HEALTHY.lungs, HEALTHY.brain];
+  ids.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(el) el.style.fill = colors[i];
+  });
+}
+
+function updateOrganColors(r){
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const ratio = Math.min(val/100, 1);
+    el.style.fill = interpolateColor(ratio);
+    el.style.opacity = 0.6 + ratio * 0.35;
+  };
+  set('organ-heart-path',  r.cv);
+  set('organ-liver-path',  r.hep);
+  set('organ-kidney-l-path', r.renal);
+  set('organ-kidney-r-path', r.renal);
+  set('organ-endo-l-path', r.endo);
+  set('organ-endo-r-path', r.endo);
+  set('organ-brain-path',  r.neuro);
+  set('organ-lung-l-path', r.cv * 0.5);
+  set('organ-lung-r-path', r.cv * 0.5);
+}
+
 
 function selectSub(el){
   // 단일 선택: 이미 선택된 것 클릭하면 해제
@@ -281,12 +333,14 @@ function resetAll(){
   });
   document.getElementById('mort-pct').textContent='—';
   document.getElementById('mort-ring').setAttribute('stroke-dasharray','0 188.5');
-  document.getElementById('body-svg').style.display='none';
   document.getElementById('idle-msg').style.display='block';
   document.getElementById('body-labels').style.opacity='0';
+  document.getElementById('glow-overlays').style.opacity='0';
   document.getElementById('tl-panel').style.display='none';
   document.getElementById('organ-cards').innerHTML='<div style="font-size:11px;color:#3a4d6a;text-align:center;padding:20px 0">시뮬레이션을 실행하면<br>장기별 위험도가 표시됩니다</div>';
   document.getElementById('clinical-cards').innerHTML='<div style="font-size:11px;color:#3a4d6a;text-align:center;padding:10px 0">—</div>';
+  // 장기 색상 건강한 상태로 복원
+  restoreHealthyOrgans();
 }
 
 function calcRisk(){
@@ -368,12 +422,12 @@ function simulate(){
   const circ=188.5;
   document.getElementById('mort-ring').setAttribute('stroke-dasharray',((r.mort/100)*circ)+' '+circ);
   document.getElementById('mort-pct').textContent=r.mort+'%';
-  document.getElementById('body-svg').style.display='block';
   document.getElementById('idle-msg').style.display='none';
   document.getElementById('body-labels').style.opacity='1';
   document.getElementById('glow-overlays').style.opacity='1';
   const glowOrgan=(id,v)=>{const el=document.getElementById('glow-'+id);if(el)el.style.opacity=Math.min(v/100,.9).toFixed(2)};
   glowOrgan('heart',r.cv);glowOrgan('liver',r.hep);glowOrgan('kidney',r.renal);glowOrgan('endo',r.endo);glowOrgan('brain',r.neuro);
+  updateOrganColors(r);
   const setLbl=(id,v)=>{const g=gradeInfo(v);document.getElementById('lbl-'+id).setAttribute('fill',g.col)};
   setLbl('heart',r.cv);setLbl('liver',r.hep);setLbl('kidney',r.renal);setLbl('endo',r.endo);setLbl('brain',r.neuro);
   const items=organDetails(r);
@@ -406,6 +460,9 @@ function showOrganInfo(key){
   };
   alert('💡 장기 클릭됨: ' + (msgs[key]||key) + '\n\nClaude에서 이 주제를 질문해보세요!');
 }
+
+// 초기 로드 시 건강한 색상 적용
+window.addEventListener('DOMContentLoaded', restoreHealthyOrgans);
 </script>
 </body>
 </html>
