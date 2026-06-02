@@ -57,26 +57,23 @@
   .clinical-sub{font-size:9px;color:#5a7aaa}
 
   /* ── 커리어 손실 바 ── */
-  .career-title{font-size:12px;font-weight:700;letter-spacing:.14em;color:#aaccff;text-transform:uppercase;margin-bottom:12px}
-  .tl-wrap{position:relative}
-  .tl-bar{display:flex;height:48px;border-radius:8px;overflow:hidden;gap:3px}
-  .tl-seg{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;transition:flex .8s ease;flex-shrink:0;padding:4px 6px;overflow:hidden}
-  .tl-seg-icon{font-size:18px;line-height:1}
-  .tl-seg-label{font-size:10px;font-weight:700;margin-top:2px;white-space:nowrap}
-
-  /* 세그먼트 색 */
-  .seg-use     {background:linear-gradient(135deg,#2a1a3a,#3a2a55)}
-  .seg-ban     {background:linear-gradient(135deg,#5a0000,#cc1111)}
-  .seg-organ   {background:linear-gradient(135deg,#3a2200,#cc7700)}
-  .seg-total   {background:linear-gradient(135deg,#0a3a0a,#1a8a1a);position:relative}
-
-  .tl-labels-row{display:flex;margin-top:8px;gap:3px}
-  .tl-lbl{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 4px}
-  .tl-lbl-top{font-size:11px;font-weight:600;color:#e0e8ff}
-  .tl-lbl-bot{font-size:9px;color:#7a9acc;margin-top:1px}
-  .tl-total-badge{background:#ff4400;color:#fff;font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;display:inline-block;margin-top:4px}
-
-  .tl-empty{display:flex;align-items:center;justify-content:center;height:48px;border-radius:8px;background:#0a0e1a;border:1px dashed #1e2d55;font-size:11px;color:#2a3d6a}
+  .career-panel{grid-column:1/-1;background:#070d1f;border:1px solid #2a3a66;border-radius:10px;padding:14px 18px}
+  .career-title{font-size:11px;font-weight:700;letter-spacing:.16em;color:#6a8acc;text-transform:uppercase;margin-bottom:12px}
+  .tl-main{display:flex;align-items:stretch;gap:16px}
+  .tl-bar-col{flex:1;min-width:0}
+  .tl-bar{display:flex;height:56px;border-radius:8px;overflow:hidden;gap:3px}
+  .tl-seg{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;padding:6px 8px;overflow:hidden;flex-shrink:0}
+  .tl-seg-name{font-size:11px;font-weight:700;white-space:nowrap;line-height:1.2}
+  .tl-seg-dur{font-size:13px;font-weight:900;margin-top:3px;white-space:nowrap}
+  .seg-use  {background:linear-gradient(160deg,#1a0e2e,#2e1d4a);border:1px solid #3a2a66}
+  .seg-ban  {background:linear-gradient(160deg,#3a0000,#8a0a0a);border:1px solid #cc2222}
+  .seg-organ{background:linear-gradient(160deg,#2a1500,#7a4200);border:1px solid #cc7700}
+  .tl-total-box{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1a0505,#3a0a0a);border:2px solid #ff4400;border-radius:10px;padding:10px 20px;flex-shrink:0;min-width:110px}
+  .tl-total-flag{font-size:20px;line-height:1}
+  .tl-total-label{font-size:9px;font-weight:600;color:#ff8844;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+  .tl-total-years{font-size:28px;font-weight:900;color:#ff3300;line-height:1;margin-top:2px}
+  .tl-total-sub{font-size:9px;color:#aa4422;margin-top:2px}
+  .tl-empty{display:flex;align-items:center;justify-content:center;height:56px;border-radius:8px;background:#060c1a;border:1px dashed #1e2d55;font-size:11px;color:#2a3d6a}
 
   @media(max-width:800px){.dash{grid-template-columns:1fr;grid-template-rows:auto;overflow-y:auto}body{overflow:auto;height:auto}}
 </style>
@@ -240,7 +237,7 @@
 
 <!-- ── 하단 전체: 커리어 손실 ── -->
 <div class="career-panel">
-  <div class="career-title">⏱ 커리어 손실 시뮬레이션 (Career Loss Simulation)</div>
+  <div class="career-title">Career Loss Simulation</div>
   <div id="tl-content">
     <div class="tl-empty">시뮬레이션을 실행하면 커리어 손실 기간이 표시됩니다</div>
   </div>
@@ -363,11 +360,11 @@ function simulate(){
         </div>
         <div class="tl-seg seg-ban" style="flex:${p2}">
           <div class="tl-seg-icon">🚫</div>
-          <div class="tl-seg-label">선수 자격 정지</div>
+          <div class="tl-seg-label">자격 정지</div>
         </div>
         <div class="tl-seg seg-organ" style="flex:${p3}">
           <div class="tl-seg-icon">🫀🫁🫘</div>
-          <div class="tl-seg-label">장기 기능 자연 회복</div>
+          <div class="tl-seg-label">장기 회복</div>
         </div>
         <div class="tl-seg seg-total" style="flex:${p4};align-items:flex-end;padding-right:10px">
           <div style="font-size:10px;color:#ffcc44;font-weight:700;white-space:nowrap">🚩 총 커리어 손실</div>
@@ -386,6 +383,9 @@ function simulate(){
         <div class="tl-lbl" style="flex:${p3}">
           <div class="tl-lbl-top">ORGAN 기능 자연 회복 시간</div>
           <div class="tl-lbl-bot">(est. ${recovery}개월)</div>
+        </div>
+        <div class="tl-lbl" style="flex:${p4}">
+          <div class="tl-total-badge">총 ${totalY}년</div>
         </div>
       </div>
     </div>`;
