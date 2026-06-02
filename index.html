@@ -346,7 +346,21 @@ function simulate(){
   const wadaBan=4; // years
   const useW=r.dur;
   const useM=Math.round(useW/4.33);
-  const recovery=Math.round((r.endo*.06)+(r.hep*.04)+(r.cv*.05));
+  let recovery;
+
+  if(selectedSub==='AAS_oral'){
+  recovery = 16;   // 개월
+  }
+  else if(selectedSub==='EPO'){
+    recovery = 6;    // 개월
+  }
+  else{
+  recovery = 0;
+  }
+  const recoveryW = Math.round(recovery * 4.33);
+  const wadaBanY = 4;
+  const wadaBanM = wadaBanY * 12;
+  const wadaBanW = Math.round(wadaBanM * 4.33);
   const totalM=useM+wadaBan*12+recovery;
   const totalY=(totalM/12).toFixed(1);
   const p1=Math.max(Math.round(useM/totalM*100),6);
@@ -372,14 +386,14 @@ function simulate(){
         <div class="tl-seg-icon">🚫</div>
         <div class="tl-seg-name">자격 정지 (WADA 기준)</div>
         <div class="tl-seg-dur">${wadaBan}년</div>
-        <div class="tl-seg-sub">(${useW} 주)</div>
+        <div class="tl-seg-sub">(${wadaBanW} 주)
       </div>
 
       <div class="tl-seg seg-organ" style="flex:${p3}">
         <div class="tl-seg-icon">🫀🫁🫘</div>
         <div class="tl-seg-name">장기 회복</div>
         <div class="tl-seg-dur">${recovery}개월</div>
-        <div class="tl-seg-sub">(${useW} 주)</div>
+        <div class="tl-seg-sub">(${recoveryW} 주)
       </div>
 
     </div>
