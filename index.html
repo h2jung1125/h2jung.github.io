@@ -61,7 +61,11 @@
   .career-title{font-size:11px;font-weight:700;letter-spacing:.16em;color:#6a8acc;text-transform:uppercase;margin-bottom:12px}
   .tl-main{display:flex;align-items:stretch;gap:16px}
   .tl-bar-col{flex:1;min-width:0}
-  .tl-bar{display:flex;height:56px;border-radius:8px;overflow:hidden;gap:3px}
+  .tl-bar{display:flex;height:90px;border-radius:8px;overflow:hidden;gap:3px}
+  .tl-seg-icon{font-size:14px;line-height:1}
+  .tl-seg-name{font-size:11px;font-weight:700;white-space:nowrap;margin-top:2px}
+  .tl-seg-dur{font-size:15px;font-weight:900;margin-top:3px;line-height:1}
+  .tl-seg-sub{font-size:9px;opacity:.8;margin-top:2px}
   .tl-seg{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;padding:6px 8px;overflow:hidden;flex-shrink:0}
   .tl-seg-name{font-size:11px;font-weight:700;white-space:nowrap;line-height:1.2}
   .tl-seg-dur{font-size:13px;font-weight:900;margin-top:3px;white-space:nowrap}
@@ -352,43 +356,43 @@ function simulate(){
   const p4=Math.max(100-p1-p2-p3,4);
 
   document.getElementById('tl-content').innerHTML=`
-    <div class="tl-wrap">
-      <div class="tl-bar">
-        <div class="tl-seg seg-use" style="flex:${p1}">
-          <div class="tl-seg-icon">💊</div>
-          <div class="tl-seg-label">약물 복용</div>
-        </div>
-        <div class="tl-seg seg-ban" style="flex:${p2}">
-          <div class="tl-seg-icon">🚫</div>
-          <div class="tl-seg-label">자격 정지</div>
-        </div>
-        <div class="tl-seg seg-organ" style="flex:${p3}">
-          <div class="tl-seg-icon">🫀🫁🫘</div>
-          <div class="tl-seg-label">장기 회복</div>
-        </div>
-        <div class="tl-seg seg-total" style="flex:${p4};align-items:flex-end;padding-right:10px">
-          <div style="font-size:10px;color:#ffcc44;font-weight:700;white-space:nowrap">🚩 총 커리어 손실</div>
-          <div style="font-size:18px;font-weight:900;color:#ff4400;white-space:nowrap">${totalY} 년</div>
-        </div>
+<div class="tl-main">
+
+  <div class="tl-bar-col">
+    <div class="tl-bar">
+
+      <div class="tl-seg seg-use" style="flex:${p1}">
+        <div class="tl-seg-icon">💊</div>
+        <div class="tl-seg-name">약물 복용</div>
+        <div class="tl-seg-dur">${useM}개월</div>
+        <div class="tl-seg-sub">(${useW} wks)</div>
       </div>
-      <div class="tl-labels-row">
-        <div class="tl-lbl" style="flex:${p1}">
-          <div class="tl-lbl-top">${useM}개월</div>
-          <div class="tl-lbl-bot">(${useW} wks)</div>
-        </div>
-        <div class="tl-lbl" style="flex:${p2}">
-          <div class="tl-lbl-top">자격 정지 기간</div>
-          <div class="tl-lbl-bot">(WADA 기준 · ${wadaBan}년)</div>
-        </div>
-        <div class="tl-lbl" style="flex:${p3}">
-          <div class="tl-lbl-top">ORGAN 기능 자연 회복 시간</div>
-          <div class="tl-lbl-bot">(est. ${recovery}개월)</div>
-        </div>
-        <div class="tl-lbl" style="flex:${p4}">
-          <div class="tl-total-badge">총 ${totalY}년</div>
-        </div>
+
+      <div class="tl-seg seg-ban" style="flex:${p2}">
+        <div class="tl-seg-icon">🚫</div>
+        <div class="tl-seg-name">자격 정지</div>
+        <div class="tl-seg-dur">${wadaBan}년</div>
+        <div class="tl-seg-sub">WADA</div>
       </div>
-    </div>`;
+
+      <div class="tl-seg seg-organ" style="flex:${p3}">
+        <div class="tl-seg-icon">🫀🫁🫘</div>
+        <div class="tl-seg-name">장기 회복</div>
+        <div class="tl-seg-dur">${recovery}개월</div>
+        <div class="tl-seg-sub">estimated</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tl-total-box">
+    <div class="tl-total-flag">🚩</div>
+    <div class="tl-total-label">총 손실</div>
+    <div class="tl-total-years">${totalY}년</div>
+    <div class="tl-total-sub">${totalM}개월</div>
+  </div>
+
+</div>`;
 }
 function resetAll(){
   selectedSub=null;
