@@ -30,15 +30,20 @@
   .reset-btn{width:100%;margin-top:5px;padding:6px;background:transparent;border:1px solid #1e2d55;border-radius:6px;color:#7a9acc;font-size:11px;cursor:pointer}
   .reset-btn:hover{border-color:#4a7aff;color:#a0c0ff}
   .center-col{display:flex;flex-direction:column;min-height:0}
-  .body-container{position:relative;flex:1;min-height:0;background:#060c1a;border-radius:8px;border:1px solid #1e2d55;overflow:hidden}
+  .body-container{position:relative;flex:1;min-height:0;background:radial-gradient(circle at 50% 42%,rgba(15,118,170,.18),rgba(6,12,26,.70) 42%,#030712 78%);border-radius:8px;border:1px solid #1e2d55;overflow:hidden;box-shadow:inset 0 0 40px rgba(32,180,255,.08)}
+  .body-container::before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(rgba(88,166,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(88,166,255,.045) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(circle at center,#000 30%,transparent 78%);pointer-events:none}
+  .body-container::after{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 72%,rgba(74,122,255,.16),transparent 38%);pointer-events:none}
   .idle-hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:#2a3d6a;white-space:nowrap;pointer-events:none}
 
   /* 장기 라벨 박스 */
-  .organ-label{position:absolute;background:#080f22;border:1px solid #1e2d55;border-radius:6px;padding:7px 10px;min-width:130px;max-width:145px;z-index:10;transition:border-color 1.4s ease}
+  .organ-label{position:absolute;background:#080f22;border:1px solid #1e2d55;border-radius:6px;padding:7px 10px;min-width:130px;max-width:145px;z-index:10;transition:border-color 2.6s ease}
+  .aas-callout{display:none;min-width:150px;max-width:170px;background:rgba(13,10,20,.92);border-color:#F59E0B;box-shadow:0 0 14px rgba(245,158,11,.18)}
+  .aas-callout.visible{display:block}
+  .callout-metric{font-size:11px;font-weight:800;letter-spacing:.02em;color:#ffd166;line-height:1.35;white-space:nowrap}
   .label-left{text-align:right}
   .lbl-organ-name{font-size:8px;font-weight:700;letter-spacing:.12em;color:#3a5a88;text-transform:uppercase;margin-bottom:3px}
-  .lbl-status{font-size:11px;font-weight:800;letter-spacing:.06em;color:#10B981;transition:color 1.4s ease}
-  .lbl-detail{font-size:9px;color:#3a5a88;margin-top:2px;line-height:1.3;transition:color 1.4s ease}
+  .lbl-status{font-size:11px;font-weight:800;letter-spacing:.06em;color:#FF3333;transition:color 2.6s ease}
+  .lbl-detail{font-size:9px;color:#3a5a88;margin-top:2px;line-height:1.3;transition:color 2.6s ease}
   .right-col{display:flex;flex-direction:column;gap:8px;min-height:0}
   .debt-score-big{font-size:52px;font-weight:800;text-align:center;line-height:1;transition:color .5s}
   .debt-label-sm{text-align:center;font-size:9px;letter-spacing:.12em;color:#4a7aff;text-transform:uppercase;margin-top:2px}
@@ -73,6 +78,29 @@
   .tl-total-sub{font-size:10px;color:#aa5522;margin-top:3px}
   .tl-empty{display:flex;align-items:center;justify-content:center;height:80px;border-radius:8px;background:#060c1a;border:1px dashed #1e2d55;font-size:11px;color:#2a3d6a}
 
+
+  /* ── 이득/손해 카드 ── */
+  .effect-panel{display:none;margin-top:8px}
+  .effect-panel.visible{display:block}
+  .effect-section{margin-bottom:6px}
+  .effect-header{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:4px;margin-bottom:4px}
+  .effect-header.gain{background:#0a2a18;color:#34d399;border-left:2px solid #10B981}
+  .effect-header.loss{background:#2a0a0a;color:#f87171;border-left:2px solid #ef4444}
+  .effect-row{display:flex;justify-content:space-between;align-items:center;padding:2px 7px;font-size:9.5px}
+  .effect-name{color:#8a9acc;flex:1}
+  .effect-val{font-weight:700;font-size:10px;min-width:52px;text-align:right}
+  .effect-val.up{color:#34d399}
+  .effect-val.down{color:#f87171}
+  .debt-ratio-box{background:linear-gradient(135deg,#1a0a2a,#2a1040);border:1px solid #5b21b6;border-radius:6px;padding:10px 12px;margin-top:6px;text-align:center}
+  .debt-ratio-num{display:none}
+  .debt-ratio-label{font-size:13px;font-weight:700;color:#c4b5fd;line-height:1.5}
+
+  /* ── 임상 위험 카드 개편 ── */
+  .clinical-list{margin-top:6px}
+  .clinical-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #0f1e38}
+  .clinical-row:last-child{border-bottom:none}
+  .clinical-name{font-size:10px;color:#7a9acc}
+  .clinical-pct{font-size:13px;font-weight:700}
   @media(max-width:800px){.dash{grid-template-columns:1fr;grid-template-rows:auto;overflow-y:auto}body{overflow:auto;height:auto}}
 </style>
 </head>
@@ -134,159 +162,501 @@
   <div class="body-container" id="body-container">
 
     <!-- 좌측 라벨 박스 -->
-    <div class="organ-label label-left" id="lbl-heart-box" style="top:28%;left:2%">
+    <div class="organ-label label-left" id="lbl-heart-box" style="top:24%;left:1%">
       <div class="lbl-organ-name">HEART &amp; VESSELS</div>
-      <div class="lbl-status" id="lbl-heart-status">STATUS: HEALTHY</div>
+      <div class="lbl-status" id="lbl-heart-status" style="color:#FF3333">STATUS: HEALTHY</div>
       <div class="lbl-detail" id="lbl-heart-detail">Cardiac output normal</div>
     </div>
 
-    <div class="organ-label label-left" id="lbl-liver-box" style="top:52%;left:2%">
+    <div class="organ-label label-left" id="lbl-liver-box" style="top:55%;left:1%">
       <div class="lbl-organ-name">LIVER &amp; TESTES</div>
-      <div class="lbl-status" id="lbl-liver-status">STATUS: NORMAL</div>
+      <div class="lbl-status" id="lbl-liver-status" style="color:#FF5533">STATUS: NORMAL</div>
       <div class="lbl-detail" id="lbl-liver-detail">Enzyme levels nominal</div>
     </div>
 
-    <!-- SVG: 실루엣 + 장기 + 리더라인 -->
-    <svg id="body-svg" viewBox="0 0 500 560" preserveAspectRatio="xMidYMid meet"
+    <div class="organ-label label-left aas-callout" id="aas-liver-box" style="top:45%;left:1%">
+      <div class="lbl-organ-name">LIVER ENZYMES</div>
+      <div class="callout-metric">간 수치 ALT +157.5%</div>
+      <div class="callout-metric">&amp; AST +122.5%</div>
+    </div>
+
+    <div class="organ-label label-left aas-callout" id="aas-testes-box" style="top:66%;left:1%">
+      <div class="lbl-organ-name">TESTICULAR FUNCTION</div>
+      <div class="callout-metric">고환크기 -26.7%</div>
+      <div class="callout-metric">정자 수 -67.7%</div>
+    </div>
+
+    <!-- SVG: 해부학 정밀 라인아트 -->
+    <svg id="body-svg" viewBox="0 0 500 600" preserveAspectRatio="xMidYMid meet"
          style="position:absolute;top:0;left:0;width:100%;height:100%">
       <defs>
-        <!-- 글로우 필터 -->
-        <filter id="f-red"  x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="6" result="b"/>
+        <!-- ── 글로우 필터 ── -->
+        <filter id="f-body-glow" x="-30%" y="-15%" width="160%" height="130%">
+          <feGaussianBlur stdDeviation="2.5" result="b"/>
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="f-grn"  x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="6" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        <filter id="f-organ-glow-red" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="9" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="f-purp" x="-50%" y="-50%" width="200%" height="200%">
+        <filter id="f-organ-glow-grn" x="-80%" y="-80%" width="260%" height="260%">
           <feGaussianBlur stdDeviation="8" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="f-vessel-glow" x="-60%" y="-30%" width="220%" height="160%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="f-ylw"  x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="8" result="b"/>
+        <filter id="f-line-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="1.8" result="b"/>
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="f-body" x="-20%" y="-10%" width="140%" height="120%">
-          <feGaussianBlur stdDeviation="1.5" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
+
+        <!-- ── 장기 그라디언트 (건강 기본) ── -->
+        <radialGradient id="grad-heart-h" cx="38%" cy="32%" r="62%">
+          <stop offset="0%"   stop-color="#ff9999"/>
+          <stop offset="45%"  stop-color="#FF3333"/>
+          <stop offset="100%" stop-color="#7a0000"/>
+        </radialGradient>
+        <radialGradient id="grad-liver-h" cx="30%" cy="28%" r="65%">
+          <stop offset="0%"   stop-color="#ff9966"/>
+          <stop offset="50%"  stop-color="#cc4400"/>
+          <stop offset="100%" stop-color="#6b1a00"/>
+        </radialGradient>
+        <radialGradient id="grad-testes-h" cx="36%" cy="28%" r="62%">
+          <stop offset="0%"   stop-color="#ff9966"/>
+          <stop offset="100%" stop-color="#cc4400"/>
+        </radialGradient>
+
+        <!-- 스캔라인 패턴 -->
+        <pattern id="scanlines" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="2" x2="4" y2="2" stroke="#20b4ff" stroke-width="0.3" opacity="0.18"/>
+        </pattern>
+
+        <!-- 신체 클립 -->
+        <clipPath id="clip-full-body">
+          <path d="M250 10 C220 10 205 28 205 52 C205 72 215 88 227 96 C218 102 200 112 188 132
+                   C172 156 165 185 162 216 C158 258 162 305 168 342 C174 375 182 395 196 408
+                   C196 408 186 440 184 475 C182 505 184 538 188 558 C192 572 204 578 218 574
+                   C228 570 234 558 234 540 C234 518 228 490 226 465
+                   C234 470 250 472 266 468 C264 492 258 518 258 540
+                   C258 558 264 570 274 574 C288 578 300 572 304 558
+                   C308 538 310 505 308 475 C306 440 296 408 296 408
+                   C310 395 318 375 324 342 C330 305 334 258 330 216
+                   C327 185 320 156 304 132 C292 112 274 102 265 96
+                   C277 88 287 72 287 52 C287 28 272 10 250 10Z"/>
+        </clipPath>
       </defs>
 
-      <!-- ═══ 인체 실루엣 (네온 블루 라인) ═══ -->
-      <g fill="none" stroke="#1e3a6e" stroke-width="1.5" filter="url(#f-body)" opacity=".9">
-        <!-- 머리 -->
-        <ellipse cx="250" cy="52" rx="34" ry="40"/>
-        <!-- 목 -->
-        <path d="M232 88 L232 108 M268 88 L268 108"/>
-        <!-- 어깨~몸통 -->
-        <path d="M232 108 Q190 112 172 130 Q155 148 155 200 Q153 260 158 310 Q163 345 175 365 Q200 375 250 375 Q300 375 325 365 Q337 345 342 310 Q347 260 345 200 Q345 148 328 130 Q310 112 268 108 Z"/>
-        <!-- 왼팔 -->
-        <path d="M172 130 Q148 140 138 175 Q128 210 130 255 Q132 270 142 272"/>
-        <!-- 오른팔 -->
-        <path d="M328 130 Q352 140 362 175 Q372 210 370 255 Q368 270 358 272"/>
-        <!-- 왼 전완 -->
-        <path d="M130 255 Q125 285 128 315 Q130 328 138 330"/>
-        <!-- 오른 전완 -->
-        <path d="M370 255 Q375 285 372 315 Q370 328 362 330"/>
-        <!-- 왼 허벅지 -->
-        <path d="M188 372 Q178 410 180 455 Q181 472 192 475"/>
-        <!-- 오른 허벅지 -->
-        <path d="M312 372 Q322 410 320 455 Q319 472 308 475"/>
-        <!-- 왼 종아리 -->
-        <path d="M180 455 Q178 495 180 530 Q182 545 192 548"/>
-        <!-- 오른 종아리 -->
-        <path d="M320 455 Q322 495 320 530 Q318 545 308 548"/>
-        <!-- 척추선 (미묘하게) -->
-        <path d="M250 108 Q250 200 250 365" stroke="#1a3060" stroke-width=".8" stroke-dasharray="4 6"/>
-        <!-- 쇄골 -->
-        <path d="M232 115 Q220 118 200 115 Q185 112 172 130" stroke-width="1"/>
-        <path d="M268 115 Q280 118 300 115 Q315 112 328 130" stroke-width="1"/>
-        <!-- 흉곽 라인 -->
-        <path d="M185 155 Q175 175 176 200 Q177 215 185 222" stroke-width=".9" opacity=".6"/>
-        <path d="M315 155 Q325 175 324 200 Q323 215 315 222" stroke-width=".9" opacity=".6"/>
-        <path d="M183 175 Q216 195 250 195 Q284 195 317 175" stroke-width=".8" opacity=".5"/>
-        <path d="M183 195 Q216 210 250 210 Q284 210 317 195" stroke-width=".8" opacity=".4"/>
+      <!-- ═══════════════════════════════════════ -->
+      <!--  레이어 1: 신체 전체 스캔라인 배경      -->
+      <!-- ═══════════════════════════════════════ -->
+      <rect x="155" y="10" width="190" height="570" rx="12"
+            fill="url(#scanlines)" clip-path="url(#clip-full-body)" opacity="1"/>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!--  레이어 2: 근육·해부 라인아트 (청색 계열) -->
+      <!-- ═══════════════════════════════════════ -->
+
+      <!-- 머리 두개골 외형 -->
+      <ellipse cx="250" cy="50" rx="36" ry="44" fill="none"
+               stroke="#20d4ff" stroke-width="1.6" opacity=".75" filter="url(#f-line-glow)"/>
+      <!-- 두개골 관상봉합 -->
+      <path d="M222 24 C226 14 235 10 250 10 C265 10 274 14 278 24"
+            fill="none" stroke="#20d4ff" stroke-width="1" opacity=".5"/>
+      <!-- 측두골 -->
+      <path d="M214 38 C210 44 210 58 214 66 M286 38 C290 44 290 58 286 66"
+            fill="none" stroke="#20d4ff" stroke-width="1" opacity=".4"/>
+      <!-- 안와 (눈 소켓) -->
+      <ellipse cx="237" cy="48" rx="9" ry="7" fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".55"/>
+      <ellipse cx="263" cy="48" rx="9" ry="7" fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".55"/>
+      <!-- 광대뼈 -->
+      <path d="M218 58 C213 62 213 68 218 72 M282 58 C287 62 287 68 282 72"
+            fill="none" stroke="#20d4ff" stroke-width="1" opacity=".4"/>
+      <!-- 하악골 -->
+      <path d="M220 82 C228 92 250 96 272 92 L280 82"
+            fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".5"/>
+      <!-- 비골 -->
+      <path d="M247 54 L250 68 L253 54" fill="none" stroke="#20d4ff" stroke-width=".9" opacity=".4"/>
+
+      <!-- 목 근육 (흉쇄유돌근) -->
+      <path d="M232 92 C228 96 225 108 226 118 M268 92 C272 96 275 108 274 118"
+            fill="none" stroke="#18b8ee" stroke-width="1.4" opacity=".65"/>
+      <path d="M229 96 C234 102 240 108 243 116 M271 96 C266 102 260 108 257 116"
+            fill="none" stroke="#18b8ee" stroke-width="0.9" opacity=".4"/>
+
+      <!-- 쇄골 -->
+      <path d="M228 118 C218 118 204 120 192 128 C182 134 175 140 170 148"
+            fill="none" stroke="#20d4ff" stroke-width="2" opacity=".7" filter="url(#f-line-glow)"/>
+      <path d="M272 118 C282 118 296 120 308 128 C318 134 325 140 330 148"
+            fill="none" stroke="#20d4ff" stroke-width="2" opacity=".7" filter="url(#f-line-glow)"/>
+
+      <!-- 어깨 삼각근 -->
+      <path d="M170 148 C160 152 155 165 156 182 C157 196 162 210 168 218"
+            fill="none" stroke="#18b8ee" stroke-width="1.4" opacity=".6"/>
+      <path d="M330 148 C340 152 345 165 344 182 C343 196 338 210 332 218"
+            fill="none" stroke="#18b8ee" stroke-width="1.4" opacity=".6"/>
+      <!-- 어깨 세부 근육선 -->
+      <path d="M162 158 C158 166 158 178 162 188 M338 158 C342 166 342 178 338 188"
+            fill="none" stroke="#18b8ee" stroke-width="0.8" opacity=".35"/>
+
+      <!-- 상완 이두근/삼두근 (왼팔) -->
+      <path d="M168 218 C162 236 158 258 160 278 C162 296 168 310 175 318"
+            fill="none" stroke="#18b8ee" stroke-width="1.4" opacity=".6"/>
+      <path d="M168 218 C174 234 175 258 172 278 C170 296 168 312 168 324"
+            fill="none" stroke="#18b8ee" stroke-width="1" opacity=".4"/>
+      <!-- 왼팔 세부 근육 -->
+      <path d="M165 230 C161 244 160 262 163 280 M172 226 C170 242 170 260 172 278"
+            fill="none" stroke="#18b8ee" stroke-width="0.7" opacity=".28"/>
+      <!-- 전완 (왼팔) -->
+      <path d="M175 318 C170 336 168 356 170 372 C172 384 176 392 180 396"
+            fill="none" stroke="#18b8ee" stroke-width="1.2" opacity=".5"/>
+      <path d="M168 324 C166 342 166 362 168 376 C170 386 174 392 178 396"
+            fill="none" stroke="#18b8ee" stroke-width="0.8" opacity=".32"/>
+
+      <!-- 상완 이두근/삼두근 (오른팔) -->
+      <path d="M332 218 C338 236 342 258 340 278 C338 296 332 310 325 318"
+            fill="none" stroke="#18b8ee" stroke-width="1.4" opacity=".6"/>
+      <path d="M332 218 C326 234 325 258 328 278 C330 296 332 312 332 324"
+            fill="none" stroke="#18b8ee" stroke-width="1" opacity=".4"/>
+      <!-- 오른팔 세부 -->
+      <path d="M335 230 C339 244 340 262 337 280 M328 226 C330 242 330 260 328 278"
+            fill="none" stroke="#18b8ee" stroke-width="0.7" opacity=".28"/>
+      <!-- 전완 (오른팔) -->
+      <path d="M325 318 C330 336 332 356 330 372 C328 384 324 392 320 396"
+            fill="none" stroke="#18b8ee" stroke-width="1.2" opacity=".5"/>
+
+      <!-- 대흉근 (Pectoralis) -->
+      <path d="M196 134 C204 148 212 158 222 165 C234 172 246 172 250 172
+               C254 172 266 172 278 165 C288 158 296 148 304 134"
+            fill="none" stroke="#20d4ff" stroke-width="1.5" opacity=".55"/>
+      <path d="M196 134 C198 148 204 160 212 168 M304 134 C302 148 296 160 288 168"
+            fill="none" stroke="#18b8ee" stroke-width="1" opacity=".38"/>
+      <!-- 흉근 세부 섬유 -->
+      <path d="M202 138 C208 150 216 160 224 166 M208 134 C213 146 220 156 228 163
+               M295 138 C289 150 281 160 273 166 M289 134 C284 146 277 156 269 163"
+            fill="none" stroke="#18b8ee" stroke-width="0.65" opacity=".28"/>
+
+      <!-- 갈비뼈 (Rib Cage) - 좌측 7개 -->
+      <path d="M222 152 C205 158 194 168 191 182 C189 194 193 202 200 204"
+            fill="none" stroke="#20d4ff" stroke-width="1.3" opacity=".65"/>
+      <path d="M222 162 C204 170 191 182 188 198 C186 212 190 222 198 225"
+            fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".60"/>
+      <path d="M222 172 C203 182 188 196 185 214 C183 230 188 242 197 246"
+            fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".58"/>
+      <path d="M222 183 C202 194 186 210 183 230 C181 248 186 262 196 268"
+            fill="none" stroke="#20d4ff" stroke-width="1.1" opacity=".55"/>
+      <path d="M222 194 C204 207 188 224 184 246 C182 266 186 278 195 284"
+            fill="none" stroke="#20d4ff" stroke-width="1.1" opacity=".52"/>
+      <path d="M224 205 C208 218 194 236 191 258 C189 278 193 292 202 298"
+            fill="none" stroke="#1ca8e0" stroke-width="1" opacity=".48"/>
+      <path d="M226 217 C212 230 200 248 198 270 C196 290 200 304 210 310"
+            fill="none" stroke="#1ca8e0" stroke-width="1" opacity=".44"/>
+
+      <!-- 갈비뼈 (우측 7개) -->
+      <path d="M278 152 C295 158 306 168 309 182 C311 194 307 202 300 204"
+            fill="none" stroke="#20d4ff" stroke-width="1.3" opacity=".65"/>
+      <path d="M278 162 C296 170 309 182 312 198 C314 212 310 222 302 225"
+            fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".60"/>
+      <path d="M278 172 C297 182 312 196 315 214 C317 230 312 242 303 246"
+            fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".58"/>
+      <path d="M278 183 C298 194 314 210 317 230 C319 248 314 262 304 268"
+            fill="none" stroke="#20d4ff" stroke-width="1.1" opacity=".55"/>
+      <path d="M278 194 C296 207 312 224 316 246 C318 266 314 278 305 284"
+            fill="none" stroke="#20d4ff" stroke-width="1.1" opacity=".52"/>
+      <path d="M276 205 C292 218 306 236 309 258 C311 278 307 292 298 298"
+            fill="none" stroke="#1ca8e0" stroke-width="1" opacity=".48"/>
+      <path d="M274 217 C288 230 300 248 302 270 C304 290 300 304 290 310"
+            fill="none" stroke="#1ca8e0" stroke-width="1" opacity=".44"/>
+
+      <!-- 흉골 (Sternum) -->
+      <path d="M246 148 C247 168 248 190 249 214 C250 238 250 258 250 278"
+            fill="none" stroke="#20d4ff" stroke-width="2" opacity=".7" filter="url(#f-line-glow)"/>
+      <!-- 흉골 검상돌기 -->
+      <path d="M248 274 C248 280 246 286 250 290 C254 286 252 280 252 274"
+            fill="none" stroke="#20d4ff" stroke-width="1.2" opacity=".55"/>
+
+      <!-- 복근 (Rectus Abdominis) -->
+      <!-- 복직근 중앙선 (백선) -->
+      <path d="M250 278 C250 298 250 320 250 346 C250 362 250 378 250 394"
+            fill="none" stroke="#18b8ee" stroke-width="1" stroke-dasharray="3 3" opacity=".45"/>
+      <!-- 복근 분절 좌 -->
+      <path d="M238 284 C234 292 234 302 238 308 M237 312 C233 320 233 330 237 338 M238 342 C234 352 234 362 238 368"
+            fill="none" stroke="#18b8ee" stroke-width="1" opacity=".45"/>
+      <!-- 복근 분절 우 -->
+      <path d="M262 284 C266 292 266 302 262 308 M263 312 C267 320 267 330 263 338 M262 342 C266 352 266 362 262 368"
+            fill="none" stroke="#18b8ee" stroke-width="1" opacity=".45"/>
+      <!-- 복근 가로선 -->
+      <path d="M236 308 C242 310 250 310 258 308 C264 306 264 310 258 308
+               M235 338 C242 340 250 340 258 338 M236 368 C243 370 250 370 257 368"
+            fill="none" stroke="#18b8ee" stroke-width="0.8" opacity=".35"/>
+      <!-- 외복사근 -->
+      <path d="M220 270 C214 288 213 310 216 332 C218 350 224 364 232 374"
+            fill="none" stroke="#18b8ee" stroke-width="0.9" opacity=".38"/>
+      <path d="M280 270 C286 288 287 310 284 332 C282 350 276 364 268 374"
+            fill="none" stroke="#18b8ee" stroke-width="0.9" opacity=".38"/>
+
+      <!-- 골반 (Pelvis) -->
+      <path d="M215 392 C204 398 196 410 195 428 C194 446 200 460 212 468 C228 478 272 478 288 468
+               C300 460 306 446 305 428 C304 410 296 398 285 392"
+            fill="none" stroke="#20d4ff" stroke-width="1.5" opacity=".62"/>
+      <!-- 장골릉 -->
+      <path d="M212 394 C208 400 206 410 208 420 M288 394 C292 400 294 410 292 420"
+            fill="none" stroke="#20d4ff" stroke-width="1" opacity=".5"/>
+      <!-- 치골 결합 -->
+      <path d="M236 472 C240 478 250 480 260 478 C264 476 264 472 260 470 C256 468 244 468 240 470 C238 472 236 474 236 472Z"
+            fill="none" stroke="#20d4ff" stroke-width="1.1" opacity=".55"/>
+
+      <!-- 허벅지 대퇴직근 / 내전근 -->
+      <path d="M212 468 C208 490 206 520 208 550 C210 568 216 578 224 580"
+            fill="none" stroke="#18b8ee" stroke-width="1.4" opacity=".6"/>
+      <path d="M216 468 C220 490 220 522 218 552 C217 568 220 578 226 580"
+            fill="none" stroke="#18b8ee" stroke-width="1" opacity=".4"/>
+      <!-- 좌허벅지 세부 -->
+      <path d="M210 478 C206 498 206 525 210 550 M218 474 C216 496 216 524 218 550"
+            fill="none" stroke="#18b8ee" stroke-width="0.65" opacity=".28"/>
+
+      <path d="M288 468 C292 490 294 520 292 550 C290 568 284 578 276 580"
+            fill="none" stroke="#18b8ee" stroke-width="1.4" opacity=".6"/>
+      <path d="M284 468 C280 490 280 522 282 552 C283 568 280 578 274 580"
+            fill="none" stroke="#18b8ee" stroke-width="1" opacity=".4"/>
+      <!-- 우허벅지 세부 -->
+      <path d="M290 478 C294 498 294 525 290 550 M282 474 C284 496 284 524 282 550"
+            fill="none" stroke="#18b8ee" stroke-width="0.65" opacity=".28"/>
+
+      <!-- 종아리 비복근 -->
+      <path d="M224 580 C222 588 222 596 224 600"
+            fill="none" stroke="#18b8ee" stroke-width="1.1" opacity=".45"/>
+      <path d="M276 580 C278 588 278 596 276 600"
+            fill="none" stroke="#18b8ee" stroke-width="1.1" opacity=".45"/>
+
+      <!-- 척추 (Spine) -->
+      <path d="M250 100 C250 124 250 160 250 200 C250 248 250 310 250 390"
+            fill="none" stroke="#20d4ff" stroke-width="1.2" stroke-dasharray="5 2.5" opacity=".55"/>
+      <!-- 척추 추체들 -->
+      <g fill="none" stroke="#20d4ff" stroke-width="0.9" opacity=".45">
+        <rect x="244" y="128" width="12" height="7" rx="2"/>
+        <rect x="244" y="142" width="12" height="7" rx="2"/>
+        <rect x="244" y="156" width="12" height="7" rx="2"/>
+        <rect x="244" y="170" width="12" height="7" rx="2"/>
+        <rect x="244" y="242" width="12" height="7" rx="2"/>
+        <rect x="244" y="258" width="12" height="7" rx="2"/>
+        <rect x="244" y="274" width="12" height="7" rx="2"/>
+        <rect x="244" y="290" width="12" height="7" rx="2"/>
+        <rect x="244" y="320" width="12" height="8" rx="2"/>
+        <rect x="244" y="335" width="12" height="8" rx="2"/>
+        <rect x="244" y="350" width="12" height="8" rx="2"/>
+        <rect x="244" y="366" width="12" height="8" rx="2"/>
       </g>
-      <!-- 피부 채움 (반투명) -->
-      <path d="M232 108 Q190 112 172 130 Q155 148 155 200 Q153 260 158 310 Q163 345 175 365 Q200 375 250 375 Q300 375 325 365 Q337 345 342 310 Q347 260 345 200 Q345 148 328 130 Q310 112 268 108 Z"
-            fill="#0a1428" opacity=".7"/>
-      <ellipse cx="250" cy="52" rx="34" ry="40" fill="#0a1428" opacity=".7"/>
 
-      <!-- ═══ 심장 ═══ -->
-      <g id="organ-heart-group" style="cursor:pointer">
-        <!-- 심장 본체 -->
-        <path id="organ-heart-path"
-              d="M250 175 Q244 162 233 162 Q218 162 218 178 Q218 194 250 212 Q282 194 282 178 Q282 162 267 162 Q256 162 250 175Z"
-              fill="#FF3333" opacity=".9"
-              style="transition:fill 1.4s ease,filter 1.4s ease"/>
-        <!-- 심장 글로우 -->
-        <path id="organ-heart-glow"
-              d="M250 175 Q244 162 233 162 Q218 162 218 178 Q218 194 250 212 Q282 194 282 178 Q282 162 267 162 Q256 162 250 175Z"
-              fill="#FF3333" opacity=".25" filter="url(#f-red)"
-              style="transition:fill 1.4s ease,opacity 1.4s ease"/>
-        <!-- 대동맥 아치 -->
-        <path d="M250 162 Q250 148 262 142 Q274 138 278 148" fill="none"
-              id="organ-aorta" stroke="#FF3333" stroke-width="3.5" stroke-linecap="round"
-              style="transition:stroke 1.4s ease"/>
-        <!-- 혈관 라인들 -->
-        <path d="M245 210 Q240 230 238 260" fill="none"
-              id="organ-vessel1" stroke="#FF3333" stroke-width="2" opacity=".6"
-              style="transition:stroke 1.4s ease"/>
-        <path d="M255 210 Q260 230 262 260" fill="none"
-              id="organ-vessel2" stroke="#FF3333" stroke-width="2" opacity=".6"
-              style="transition:stroke 1.4s ease"/>
+      <!-- 폐 (Lungs) -->
+      <path d="M226 152 C210 162 196 182 192 208 C188 234 194 255 208 258 C218 259 226 248 228 228 C230 208 228 180 226 152Z"
+            fill="none" stroke="#20d4ff" stroke-width="1.3" opacity=".5"/>
+      <path d="M274 152 C290 162 304 182 308 208 C312 234 306 255 292 258 C282 259 274 248 272 228 C270 208 272 180 274 152Z"
+            fill="none" stroke="#20d4ff" stroke-width="1.3" opacity=".5"/>
+      <!-- 폐 내부 기관지 -->
+      <path d="M228 175 C218 185 212 200 212 215 M224 192 C216 202 213 214 214 226
+               M226 210 C220 218 218 228 220 238"
+            fill="none" stroke="#18b8ee" stroke-width="0.8" opacity=".3"/>
+      <path d="M272 175 C282 185 288 200 288 215 M276 192 C284 202 287 214 286 226
+               M274 210 C280 218 282 228 280 238"
+            fill="none" stroke="#18b8ee" stroke-width="0.8" opacity=".3"/>
+      <!-- 기관 (Trachea) -->
+      <path d="M246 96 C246 108 246 122 246 138 M254 96 C254 108 254 122 254 138"
+            fill="none" stroke="#20d4ff" stroke-width="1" opacity=".52"/>
+      <path d="M246 105 L254 105 M246 114 L254 114 M246 123 L254 123 M246 132 L254 132"
+            fill="none" stroke="#20d4ff" stroke-width="0.7" opacity=".4"/>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!--  레이어 3: 전신 혈관 계통               -->
+      <!-- ═══════════════════════════════════════ -->
+      <g id="vascular-system">
+
+      <!-- 혈관 글로우 레이어 (시뮬레이션 시 활성화) -->
+      <g id="vessel-glow-group" opacity="0" style="transition:opacity 2.6s ease">
+        <path d="M250 200 C250 250 250 320 250 395" fill="none"
+              stroke="#FF3333" stroke-width="10" opacity=".12" filter="url(#f-vessel-glow)"/>
+        <path d="M250 200 C265 220 280 246 295 280 C310 314 320 348 322 380"
+              fill="none" stroke="#FF3333" stroke-width="7" opacity=".10" filter="url(#f-vessel-glow)"/>
+        <path d="M250 200 C235 220 220 246 205 280 C190 314 180 348 178 380"
+              fill="none" stroke="#FF3333" stroke-width="7" opacity=".10" filter="url(#f-vessel-glow)"/>
       </g>
 
-      <!-- ═══ 간 ═══ -->
-      <g id="organ-liver-group" style="cursor:pointer">
-        <path id="organ-liver-path"
-              d="M255 248 Q280 242 295 256 Q302 268 295 280 Q282 290 265 290 Q248 290 242 278 Q235 264 242 254 Q248 247 255 248Z"
-              fill="#10B981" opacity=".9"
-              style="transition:fill 1.4s ease"/>
-        <path id="organ-liver-glow"
-              d="M255 248 Q280 242 295 256 Q302 268 295 280 Q282 290 265 290 Q248 290 242 278 Q235 264 242 254 Q248 247 255 248Z"
-              fill="#10B981" opacity=".2" filter="url(#f-grn)"
-              style="transition:fill 1.4s ease,opacity 1.4s ease"/>
+      <!-- 대동맥 아치 -->
+      <path id="organ-aorta"
+            d="M250 200 C248 178 258 162 272 156 C285 152 296 158 298 172 C299 184 292 192 280 196"
+            fill="none" stroke="#ff4040" stroke-width="4.8" stroke-linecap="round" opacity=".92"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 대동맥 하행 (Descending Aorta) -->
+      <path id="organ-vessel1"
+            d="M250 205 C249 248 248 302 249 360 C249 378 250 390 250 405"
+            fill="none" stroke="#ff3a3a" stroke-width="3.4" stroke-linecap="round" opacity=".88"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 총장골동맥 분기 -->
+      <path id="organ-vessel3"
+            d="M250 405 C242 420 234 438 226 462 C220 482 217 508 216 534"
+            fill="none" stroke="#ff3535" stroke-width="2.2" stroke-linecap="round" opacity=".72"
+            style="transition:stroke 2.6s ease"/>
+      <path id="organ-vessel4"
+            d="M250 405 C258 420 266 438 274 462 C280 482 283 508 284 534"
+            fill="none" stroke="#ff3535" stroke-width="2.2" stroke-linecap="round" opacity=".72"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 쇄골하동맥 (왼팔) -->
+      <path id="organ-vessel2"
+            d="M234 172 C222 168 210 166 196 168 C180 170 166 180 160 196 C154 212 155 234 160 256 C164 272 170 286 175 298"
+            fill="none" stroke="#ff4040" stroke-width="2" stroke-linecap="round" opacity=".65"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 쇄골하동맥 (오른팔) -->
+      <path d="M266 172 C278 168 290 166 304 168 C320 170 334 180 340 196 C346 212 345 234 340 256 C336 272 330 286 325 298"
+            fill="none" stroke="#ff4040" stroke-width="2" stroke-linecap="round" opacity=".65"
+            style="transition:stroke 2.6s ease" id="r-subclavian"/>
+      <!-- 복강동맥 분지 -->
+      <path d="M249 270 C240 272 230 278 222 286 M251 270 C260 272 270 278 278 286"
+            fill="none" stroke="#ff4545" stroke-width="1.5" stroke-linecap="round" opacity=".6"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 장간막동맥 -->
+      <path d="M250 300 C238 308 226 318 218 332 C213 342 212 354 214 364
+               M250 300 C262 308 274 318 282 332 C287 342 288 354 286 364"
+            fill="none" stroke="#ff4545" stroke-width="1.3" stroke-linecap="round" opacity=".55"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 신장동맥 -->
+      <path d="M249 316 C238 316 228 318 220 324 M251 316 C262 316 272 318 280 324"
+            fill="none" stroke="#ff5555" stroke-width="1.4" opacity=".58"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 미세 혈관 분지 (상체) -->
+      <path d="M246 215 C234 222 220 235 208 250 C196 264 188 280 184 296"
+            fill="none" stroke="#ff5555" stroke-width="1.1" opacity=".48"
+            style="transition:stroke 2.6s ease"/>
+      <path d="M254 215 C266 222 280 235 292 250 C304 264 312 280 316 296"
+            fill="none" stroke="#ff5555" stroke-width="1.1" opacity=".48"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 상지 소혈관 -->
+      <path d="M160 256 C158 268 158 282 162 296 C166 308 172 316 178 320
+               M174 298 C170 312 168 328 170 344 C172 356 176 364 180 370"
+            fill="none" stroke="#ff5a5a" stroke-width="1" opacity=".42"
+            style="transition:stroke 2.6s ease"/>
+      <path d="M340 256 C342 268 342 282 338 296 C334 308 328 316 322 320
+               M326 298 C330 312 332 328 330 344 C328 356 324 364 320 370"
+            fill="none" stroke="#ff5a5a" stroke-width="1" opacity=".42"
+            style="transition:stroke 2.6s ease"/>
+      <!-- 하지 소혈관 -->
+      <path d="M216 534 C214 548 214 562 216 576 C218 586 222 594 226 598"
+            fill="none" stroke="#ff5a5a" stroke-width="1" opacity=".4"
+            style="transition:stroke 2.6s ease"/>
+      <path d="M284 534 C286 548 286 562 284 576 C282 586 278 594 274 598"
+            fill="none" stroke="#ff5a5a" stroke-width="1" opacity=".4"
+            style="transition:stroke 2.6s ease"/>
+
+      <!-- 경동맥 (Carotid) -->
+      <path d="M244 96 C242 110 241 124 242 140 M256 96 C258 110 259 124 258 140"
+            fill="none" stroke="#ff4848" stroke-width="1.6" opacity=".7"
+            style="transition:stroke 2.6s ease"/>
       </g>
 
-      <!-- ═══ 고환 (Testes) ═══ -->
-      <g id="organ-testes-group" style="cursor:pointer">
-        <ellipse id="organ-testes-l" cx="238" cy="365" rx="10" ry="13"
-                 fill="#10B981" opacity=".85"
-                 style="transition:fill 1.4s ease"/>
-        <ellipse id="organ-testes-r" cx="262" cy="365" rx="10" ry="13"
-                 fill="#10B981" opacity=".85"
-                 style="transition:fill 1.4s ease"/>
-        <ellipse id="organ-testes-glow-l" cx="238" cy="365" rx="10" ry="13"
-                 fill="#10B981" opacity=".15" filter="url(#f-grn)"
-                 style="transition:fill 1.4s ease,opacity 1.4s ease"/>
-        <ellipse id="organ-testes-glow-r" cx="262" cy="365" rx="10" ry="13"
-                 fill="#10B981" opacity=".15" filter="url(#f-grn)"
-                 style="transition:fill 1.4s ease,opacity 1.4s ease"/>
+      <!-- ═══════════════════════════════════════ -->
+      <!--  레이어 4: 3대 주요 장기                -->
+      <!-- ═══════════════════════════════════════ -->
+
+      <!-- 심장 글로우 -->
+      <path id="organ-heart-glow"
+            d="M250 198 C241 180 220 182 216 200 C212 220 228 238 250 250 C272 238 290 218 286 198 C282 178 260 180 250 198Z"
+            fill="#FF3333" opacity=".38" filter="url(#f-organ-glow-red)"
+            style="transition:fill 2.6s ease"/>
+      <!-- 심장 본체 -->
+      <path id="heart"
+            d="M250 198 C241 180 220 182 216 200 C212 220 228 238 250 250 C272 238 290 218 286 198 C282 178 260 180 250 198Z"
+            fill="url(#grad-heart-h)" opacity=".96"
+            style="transition:fill 2.6s ease"/>
+      <!-- 심장 하이라이트 -->
+      <path d="M235 188 C228 193 224 202 226 212" fill="none"
+            stroke="white" stroke-width="1.8" opacity=".3" stroke-linecap="round"/>
+      <!-- 심장 세부 선 (좌심실/우심실 경계) -->
+      <path d="M250 200 C248 218 248 232 250 248" fill="none"
+            stroke="rgba(0,0,0,0.25)" stroke-width="1.2" stroke-linecap="round"/>
+      <!-- 폐동맥 -->
+      <path d="M250 182 C244 172 238 166 230 165 M250 182 C256 172 262 166 270 165"
+            fill="none" stroke="#ff6060" stroke-width="1.8" opacity=".75"
+            style="transition:stroke 2.6s ease"/>
+
+      <!-- 간 글로우 -->
+      <path id="organ-liver-glow"
+            d="M216 264 C246 248 292 254 314 272 C326 285 318 310 292 320 C262 330 218 316 206 294 C198 278 202 268 216 264Z"
+            fill="#10B981" opacity=".3" filter="url(#f-organ-glow-grn)"
+            style="transition:fill 2.6s ease"/>
+      <!-- 간 본체 -->
+      <path id="liver"
+            d="M216 264 C246 248 292 254 314 272 C326 285 318 310 292 320 C262 330 218 316 206 294 C198 278 202 268 216 264Z"
+            fill="url(#grad-liver-h)" opacity=".94"
+            style="transition:fill 2.6s ease"/>
+      <!-- 간 하이라이트 -->
+      <path d="M222 268 C244 256 272 258 290 270" fill="none"
+            stroke="white" stroke-width="1.8" opacity=".22" stroke-linecap="round"/>
+      <!-- 간 엽 경계선 -->
+      <path d="M258 252 C258 272 256 292 256 314" fill="none"
+            stroke="rgba(0,0,0,0.2)" stroke-width="1" stroke-linecap="round"/>
+
+      <!-- 신장 (보조 표시) -->
+      <path d="M220 336 C208 340 202 356 207 374 C213 392 230 390 236 372 C240 357 234 338 220 336Z"
+            fill="none" stroke="#20d4ff" stroke-width="1.4" opacity=".55"
+            filter="url(#f-line-glow)"/>
+      <path d="M280 336 C292 340 298 356 293 374 C287 392 270 390 264 372 C260 357 266 338 280 336Z"
+            fill="none" stroke="#20d4ff" stroke-width="1.4" opacity=".55"
+            filter="url(#f-line-glow)"/>
+
+      <!-- 고환 글로우 -->
+      <ellipse id="organ-testes-glow-l" cx="234" cy="430" rx="15" ry="19"
+               fill="#10B981" opacity=".28" filter="url(#f-organ-glow-grn)"
+               style="transition:fill 2.6s ease"/>
+      <ellipse id="organ-testes-glow-r" cx="266" cy="430" rx="15" ry="19"
+               fill="#10B981" opacity=".28" filter="url(#f-organ-glow-grn)"
+               style="transition:fill 2.6s ease"/>
+      <!-- 고환 본체 -->
+      <ellipse id="testes-l"
+               cx="234" cy="430" rx="14" ry="18"
+               fill="url(#grad-testes-h)" opacity=".94"
+               style="transition:fill 2.6s ease"/>
+      <ellipse id="testes-r"
+               cx="266" cy="430" rx="14" ry="18"
+               fill="url(#grad-testes-h)" opacity=".94"
+               style="transition:fill 2.6s ease"/>
+      <!-- 고환 하이라이트 -->
+      <ellipse cx="229" cy="423" rx="5" ry="4" fill="white" opacity=".18"/>
+      <ellipse cx="261" cy="423" rx="5" ry="4" fill="white" opacity=".18"/>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!--  레이어 5: 리더라인                     -->
+      <!-- ═══════════════════════════════════════ -->
+      <!-- 심장 → 좌측 라벨 -->
+      <circle id="dot-heart" cx="216" cy="204" r="4"
+              fill="#FF3333" style="transition:fill 2.6s ease"/>
+      <line id="leader-heart" x1="216" y1="204" x2="148" y2="222"
+            stroke="#FF3333" stroke-width="1.1" stroke-dasharray="5 3" opacity=".85"
+            style="transition:stroke 2.6s ease"/>
+
+      <!-- 간 → 좌측 라벨 -->
+      <circle id="dot-liver" cx="210" cy="286" r="4"
+              fill="#10B981" style="transition:fill 2.6s ease"/>
+      <line id="leader-liver" x1="210" y1="286" x2="148" y2="316"
+            stroke="#10B981" stroke-width="1.1" stroke-dasharray="5 3" opacity=".85"
+            style="transition:stroke 2.6s ease"/>
+
+      <!-- 고환 → 좌측 라벨 -->
+      <circle id="dot-testes" cx="222" cy="418" r="4"
+              fill="#10B981" style="transition:fill 2.6s ease"/>
+      <line id="leader-testes" x1="222" y1="418" x2="148" y2="374"
+            stroke="#10B981" stroke-width="1.1" stroke-dasharray="5 3" opacity=".75"
+            style="transition:stroke 2.6s ease"/>
+
+      <g id="aas-callout-lines" opacity="0" style="transition:opacity 2.6s ease">
+        <path id="leader-aas-liver" d="M210 286 C178 286 146 278 108 278"
+              fill="none" stroke="#F59E0B" stroke-width="1.35" opacity=".95"
+              style="transition:stroke 2.6s ease"/>
+        <path id="leader-aas-testes" d="M222 418 C184 418 146 407 108 397"
+              fill="none" stroke="#F59E0B" stroke-width="1.35" opacity=".95"
+              style="transition:stroke 2.6s ease"/>
+        <circle id="dot-aas-liver" cx="210" cy="286" r="4" fill="#F59E0B"/>
+        <circle id="dot-aas-testes" cx="222" cy="418" r="4" fill="#F59E0B"/>
       </g>
-
-      <!-- ═══ 리더라인 ═══ -->
-      <!-- 심장 → 왼쪽 라벨 -->
-      <line id="leader-heart" x1="218" y1="188" x2="148" y2="200"
-            stroke="#FF3333" stroke-width="1" stroke-dasharray="4 3" opacity=".7"
-            style="transition:stroke 1.4s ease"/>
-      <circle cx="218" cy="188" r="3" id="dot-heart" fill="#FF3333"
-              style="transition:fill 1.4s ease"/>
-
-      <!-- 간 → 왼쪽 라벨 -->
-      <line id="leader-liver" x1="242" y1="270" x2="148" y2="318"
-            stroke="#10B981" stroke-width="1" stroke-dasharray="4 3" opacity=".7"
-            style="transition:stroke 1.4s ease"/>
-      <circle cx="242" cy="270" r="3" id="dot-liver" fill="#10B981"
-              style="transition:fill 1.4s ease"/>
-
-      <!-- 고환 → 왼쪽 라벨 (합류) -->
-      <line id="leader-testes" x1="238" y1="354" x2="148" y2="330"
-            stroke="#10B981" stroke-width="1" stroke-dasharray="4 3" opacity=".6"
-            style="transition:stroke 1.4s ease"/>
-      <circle cx="238" cy="354" r="3" id="dot-testes" fill="#10B981"
-              style="transition:fill 1.4s ease"/>
     </svg>
 
     <!-- 힌트 -->
@@ -296,32 +666,35 @@
 
 <!-- 우측: 생체 부채 지수 -->
 <div class="right-col">
+  <!-- 생체 부채 지수 + 장기 바 -->
   <div class="panel" style="flex-shrink:0">
     <div class="panel-title">생체 부채 지수</div>
     <div class="debt-score-big" id="debt-score" style="color:#2a4aff">—</div>
     <div class="debt-label-sm">BIO-DEBT INDEX</div>
     <div style="margin-top:4px"><span class="debt-grade" id="debt-grade" style="background:#1e2d55;color:#5a7aaa">시뮬레이션 전</span></div>
-    <div style="margin-top:10px">
-      <div class="bar-row"><div class="bar-label">심혈관</div><div class="bar-track"><div class="bar-fill" id="cv-bar" style="width:0%;background:#ff4444"></div></div><div class="bar-val" id="cv-val">—</div></div>
-      <div class="bar-row"><div class="bar-label">간 (肝)</div><div class="bar-track"><div class="bar-fill" id="hep-bar" style="width:0%;background:#ffaa00"></div></div><div class="bar-val" id="hep-val">—</div></div>
-      <div class="bar-row"><div class="bar-label">내분비계</div><div class="bar-track"><div class="bar-fill" id="endo-bar" style="width:0%;background:#aa44ff"></div></div><div class="bar-val" id="endo-val">—</div></div>
-      <div class="bar-row"><div class="bar-label">신장 (腎)</div><div class="bar-track"><div class="bar-fill" id="renal-bar" style="width:0%;background:#44aaff"></div></div><div class="bar-val" id="renal-val">—</div></div>
-      <div class="bar-row"><div class="bar-label">신경계</div><div class="bar-track"><div class="bar-fill" id="neuro-bar" style="width:0%;background:#44ffaa"></div></div><div class="bar-val" id="neuro-val">—</div></div>
+
+    <!-- 이득/손해 효과 패널 -->
+    <div class="effect-panel" id="effect-panel">
+      <div class="debt-ratio-box">
+        <div class="debt-ratio-num" id="debt-ratio-num">—</div>
+        <div class="debt-ratio-label" id="debt-ratio-label">생체 부채 지수</div>
+      </div>
+      <div class="effect-section" style="margin-top:8px">
+        <div class="effect-header gain">▲ 이득 (Performance Gains)</div>
+        <div id="effect-gains"></div>
+      </div>
+      <div class="effect-section">
+        <div class="effect-header loss">▼ 손해 (Biological Cost)</div>
+        <div id="effect-losses"></div>
+      </div>
     </div>
   </div>
+
+  <!-- 임상 위험 지표 -->
   <div class="panel" style="flex-shrink:0">
     <div class="panel-title">임상 위험 지표</div>
-    <div class="clinical-grid">
-      <div class="clinical-card">
-        <div style="font-size:9px;color:#4a7aff;margin-bottom:2px">심혈관 질환</div>
-        <div class="clinical-val" id="cv-risk-val" style="color:#2a4aff">—</div>
-        <div class="clinical-sub" id="cv-risk-sub">위험비 —</div>
-      </div>
-      <div class="clinical-card">
-        <div style="font-size:9px;color:#4a7aff;margin-bottom:2px">10년 사망 위험</div>
-        <div class="clinical-val" id="mort-val" style="color:#2a4aff">—</div>
-        <div class="clinical-sub" id="mort-sub">위험비 —</div>
-      </div>
+    <div id="clinical-content">
+      <div style="font-size:10px;color:#3a4d6a;text-align:center;padding:8px 0">시뮬레이션 후 표시</div>
     </div>
   </div>
 </div>
@@ -345,65 +718,312 @@ const HEART_HEALTHY  = '#FF3333';
 const HEART_DAMAGED  = '#8B5CF6';
 const ORGAN_HEALTHY  = '#10B981';
 const ORGAN_DAMAGED  = '#F59E0B';
+const ORGAN_TRANSITION_MS = 2600;
 
-function setEl(id, prop, val){ const el=document.getElementById(id); if(el) el.style[prop]=val; }
+function setEl(id, prop, val){
+  const el=document.getElementById(id);
+  if(!el) return;
+  if(prop==='fill'||prop==='stroke'||prop==='opacity'){
+    el.setAttribute(prop, val);
+    el.style[prop] = val;
+  } else {
+    el.style[prop]=val;
+  }
+}
+function setAttr(id, attr, val){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.setAttribute(attr,val);
+  if(attr==='fill'||attr==='stroke'||attr==='opacity') el.style[attr]=val;
+}
+function setText(id, val){ const el=document.getElementById(id); if(el) el.textContent=val; }
+function setDisplay(id, val){ const el=document.getElementById(id); if(el) el.style.display=val; }
 
-function restoreHealthyOrgans(){
-  // 심장/혈관
-  setEl('organ-heart-path','fill', HEART_HEALTHY);
-  setEl('organ-heart-glow','fill', HEART_HEALTHY);
-  setEl('organ-aorta','stroke', HEART_HEALTHY);
-  setEl('organ-vessel1','stroke', HEART_HEALTHY);
-  setEl('organ-vessel2','stroke', HEART_HEALTHY);
-  setEl('leader-heart','stroke', HEART_HEALTHY);
-  setEl('dot-heart','fill', HEART_HEALTHY);
-  // 간/고환
-  ['organ-liver-path','organ-liver-glow','organ-testes-l','organ-testes-r',
-   'organ-testes-glow-l','organ-testes-glow-r'].forEach(id=>setEl(id,'fill',ORGAN_HEALTHY));
-  ['leader-liver','leader-testes'].forEach(id=>setEl(id,'stroke',ORGAN_HEALTHY));
-  ['dot-liver','dot-testes'].forEach(id=>setEl(id,'fill',ORGAN_HEALTHY));
+function setSvgTransitionSpeed(seconds=2.6){
+  document.querySelectorAll('#body-svg [style*="transition"]').forEach(el=>{
+    el.style.transition = el.style.transition.replace(/\d+(\.\d+)?s/g, seconds+'s');
+  });
+}
+
+const gradientTweens = new Map();
+function hexToRgb(hex){
+  const clean = hex.replace('#','').trim();
+  const full = clean.length === 3 ? clean.split('').map(c=>c+c).join('') : clean;
+  const n = parseInt(full, 16);
+  return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+}
+function rgbToHex({r,g,b}){
+  return '#'+[r,g,b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('');
+}
+function readStopColor(stop){
+  const raw = stop.getAttribute('stop-color') || stop.style.stopColor || '#000000';
+  if(raw.startsWith('#')) return hexToRgb(raw);
+  const m = raw.match(/\d+(\.\d+)?/g);
+  if(m) return {r:+m[0],g:+m[1],b:+m[2]};
+  return hexToRgb('#000000');
+}
+function setGradientStops(id, colors, animate=true){
+  const grad = document.getElementById(id);
+  if(!grad) return;
+  const stops = Array.from(grad.children);
+  const token = Symbol(id);
+  gradientTweens.set(id, token);
+  if(!animate){
+    stops.forEach((stop,i)=>stop.setAttribute('stop-color', colors[i] || colors[colors.length-1]));
+    return;
+  }
+  const starts = stops.map(readStopColor);
+  const targets = stops.map((_,i)=>hexToRgb(colors[i] || colors[colors.length-1]));
+  const startTime = performance.now();
+  function step(now){
+    if(gradientTweens.get(id) !== token) return;
+    const t = Math.min((now - startTime) / ORGAN_TRANSITION_MS, 1);
+    const eased = t < .5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
+    stops.forEach((stop,i)=>{
+      const a = starts[i], b = targets[i];
+      stop.setAttribute('stop-color', rgbToHex({
+        r:a.r + (b.r-a.r)*eased,
+        g:a.g + (b.g-a.g)*eased,
+        b:a.b + (b.b-a.b)*eased
+      }));
+    });
+    if(t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+let lastCanvasRisk = null;
+
+function drawMedicalBody(risk=null){
+  lastCanvasRisk = risk;
+}
+
+function restoreHealthyOrgans(animate=true){
+  isSimulated = false;
+  setSvgTransitionSpeed(2.6);
+  document.querySelectorAll('.aas-callout').forEach(el=>el.classList.remove('visible'));
+  setAttr('aas-callout-lines','opacity','0');
+  setDisplay('lbl-heart-box','none');
+  setDisplay('lbl-liver-box','none');
+
+  // 그라디언트 → 건강(빨강) 복원
+  setGradientStops('grad-heart-h', ['#ff8888','#FF3333','#8B0000'], animate);
+  setGradientStops('grad-liver-h', ['#ff9966','#cc4400','#6b1a00'], animate);
+  setGradientStops('grad-testes-h', ['#ff9966','#cc4400'], animate);
+
+  // 심장 복원
+  setAttr('heart','fill','url(#grad-heart-h)');
+  setAttr('organ-heart-glow','fill','#FF3333');
+  setAttr('organ-heart-glow','opacity','.38');
+  setAttr('vessel-glow-group','opacity','0');
+  setAttr('leader-heart','stroke','#FF3333');
+  setAttr('leader-heart','opacity','0');
+  setAttr('dot-heart','fill','#FF3333');
+  setAttr('dot-heart','opacity','0');
+  // 혈관 전체 복원
+  document.querySelectorAll('#vascular-system path').forEach(el=>{
+    el.setAttribute('stroke','#20d4ff');
+    el.style.stroke = '#20d4ff';
+  });
+
+  // 간 복원
+  setAttr('liver','fill','url(#grad-liver-h)');
+  setAttr('organ-liver-glow','fill','#cc4400');
+  setAttr('organ-liver-glow','opacity','.3');
+  // 고환 복원
+  ['testes-l','testes-r'].forEach(id=>setAttr(id,'fill','url(#grad-testes-h)'));
+  ['organ-testes-glow-l','organ-testes-glow-r'].forEach(id=>setAttr(id,'fill','#cc4400'));
+  ['organ-testes-glow-l','organ-testes-glow-r'].forEach(id=>setAttr(id,'opacity','.28'));
+  setAttr('testes-l','rx','14'); setAttr('testes-l','ry','18');
+  setAttr('testes-r','rx','14'); setAttr('testes-r','ry','18');
+  setAttr('organ-testes-glow-l','rx','15'); setAttr('organ-testes-glow-l','ry','19');
+  setAttr('organ-testes-glow-r','rx','15'); setAttr('organ-testes-glow-r','ry','19');
+  ['leader-liver','leader-testes'].forEach(id=>setAttr(id,'stroke','#cc4400'));
+  ['dot-liver','dot-testes'].forEach(id=>setAttr(id,'fill','#cc4400'));
+  setAttr('leader-liver','opacity','0');
+  setAttr('leader-testes','opacity','0');
+  setAttr('dot-liver','opacity','0');
+  setAttr('dot-testes','opacity','0');
+
   // 라벨 복원
-  setEl('lbl-heart-status','color','#10B981');
-  document.getElementById('lbl-heart-status').textContent='STATUS: HEALTHY';
-  document.getElementById('lbl-heart-detail').textContent='Cardiac output normal';
-  setEl('lbl-liver-status','color','#10B981');
-  document.getElementById('lbl-liver-status').textContent='STATUS: NORMAL';
-  document.getElementById('lbl-liver-detail').textContent='Enzyme levels nominal';
-  // 라벨 박스 테두리
-  ['lbl-heart-box','lbl-liver-box'].forEach(id=>setEl(id,'borderColor','#1e2d55'));
+  const hs=document.getElementById('lbl-heart-status');
+  const hd=document.getElementById('lbl-heart-detail');
+  const ls=document.getElementById('lbl-liver-status');
+  const ld=document.getElementById('lbl-liver-detail');
+  if(hs){hs.style.color='#FF3333'; hs.textContent='STATUS: HEALTHY';}
+  if(hd){hd.textContent='Cardiac output normal';}
+  if(ls){ls.style.color='#FF5533'; ls.textContent='STATUS: NORMAL';}
+  if(ld){ld.textContent='Enzyme levels nominal';}
+
+  // 라벨 박스 테두리 복원
+  ['lbl-heart-box','lbl-liver-box'].forEach(id=>{
+    const el=document.getElementById(id); if(el){el.style.borderColor='#1e2d55'; el.style.boxShadow='none';}
+  });
 }
 
 function updateOrganColors(r){
   isSimulated = true;
-  // 심장/혈관 → 보라
-  setEl('organ-heart-path','fill', HEART_DAMAGED);
-  setEl('organ-heart-glow','fill', HEART_DAMAGED);
-  setEl('organ-aorta','stroke', HEART_DAMAGED);
-  setEl('organ-vessel1','stroke', HEART_DAMAGED);
-  setEl('organ-vessel2','stroke', HEART_DAMAGED);
-  setEl('leader-heart','stroke', HEART_DAMAGED);
-  setEl('dot-heart','fill', HEART_DAMAGED);
-  // 심장 라벨
-  setEl('lbl-heart-status','color','#8B5CF6');
-  document.getElementById('lbl-heart-status').textContent='CARDIAC OVERLOAD';
-  document.getElementById('lbl-heart-detail').textContent='SHIFT TO PURPLE / Risk +'+r.cv+'%';
-  setEl('lbl-heart-box','borderColor','#8B5CF6');
-  // 간/고환 → 노랑
-  ['organ-liver-path','organ-liver-glow','organ-testes-l','organ-testes-r',
-   'organ-testes-glow-l','organ-testes-glow-r'].forEach(id=>setEl(id,'fill',ORGAN_DAMAGED));
-  ['leader-liver','leader-testes'].forEach(id=>setEl(id,'stroke',ORGAN_DAMAGED));
-  ['dot-liver','dot-testes'].forEach(id=>setEl(id,'fill',ORGAN_DAMAGED));
-  // 간/고환 라벨
-  setEl('lbl-liver-status','color','#F59E0B');
-  document.getElementById('lbl-liver-status').textContent='TOXICITY DETECTED';
-  document.getElementById('lbl-liver-detail').textContent='SHUTDOWN RISK / Tox +'+r.hep+'%';
-  setEl('lbl-liver-box','borderColor','#F59E0B');
+  // 먼저 건강 상태로 리셋 후 해당 약물 색 적용
+  restoreHealthyOrgans(false);
+  isSimulated = true;
+
+  if(selectedSub === 'EPO'){
+    // 심장·혈관 → 보라
+    setGradientStops('grad-heart-h', ['#c4b5fd','#8B5CF6','#3b0764'], true);
+    setAttr('heart','fill','url(#grad-heart-h)');
+    setAttr('organ-heart-glow','fill',HEART_DAMAGED);
+    document.querySelectorAll('#vascular-system path').forEach(el=>{
+      el.setAttribute('stroke',HEART_DAMAGED);
+      el.style.stroke = HEART_DAMAGED;
+    });
+    setAttr('vessel-glow-group','opacity','.65');
+    setAttr('leader-heart','stroke',HEART_DAMAGED);
+    setAttr('leader-heart','opacity','.85');
+    setAttr('dot-heart','fill',HEART_DAMAGED);
+    setAttr('dot-heart','opacity','1');
+    // 심장 라벨
+    const hs=document.getElementById('lbl-heart-status');
+    const hd=document.getElementById('lbl-heart-detail');
+    const hb=document.getElementById('lbl-heart-box');
+    if(hs){hs.style.color=HEART_DAMAGED; hs.textContent='HEMATOCRIT OVERLOAD';}
+    if(hd){hd.textContent='혈액 점도 증가 / 혈전 위험';}
+    if(hb){hb.style.borderColor=HEART_DAMAGED; hb.style.boxShadow='0 0 10px rgba(139,92,246,.3)';}
+    document.querySelectorAll('.aas-callout').forEach(el=>el.classList.remove('visible'));
+    setAttr('aas-callout-lines','opacity','0');
+    setDisplay('lbl-heart-box','block');
+    setDisplay('lbl-liver-box','none');
+    return;
+  }
+
+  if(selectedSub === 'AAS_oral'){
+    // 간·고환 → 주황
+    setGradientStops('grad-liver-h', ['#fde68a','#F59E0B','#78350f'], true);
+    setGradientStops('grad-testes-h', ['#fde68a','#d97706'], true);
+    setAttr('liver','fill','url(#grad-liver-h)');
+    setAttr('organ-liver-glow','fill',ORGAN_DAMAGED);
+    ['testes-l','testes-r'].forEach(id=>setAttr(id,'fill','url(#grad-testes-h)'));
+    ['organ-testes-glow-l','organ-testes-glow-r'].forEach(id=>setAttr(id,'fill',ORGAN_DAMAGED));
+    setAttr('testes-l','rx','9'); setAttr('testes-l','ry','12');
+    setAttr('testes-r','rx','9'); setAttr('testes-r','ry','12');
+    setAttr('organ-testes-glow-l','rx','10'); setAttr('organ-testes-glow-l','ry','13');
+    setAttr('organ-testes-glow-r','rx','10'); setAttr('organ-testes-glow-r','ry','13');
+    ['leader-liver','leader-testes'].forEach(id=>setAttr(id,'stroke',ORGAN_DAMAGED));
+    ['dot-liver','dot-testes'].forEach(id=>setAttr(id,'fill',ORGAN_DAMAGED));
+    setAttr('leader-liver','opacity','0');
+    setAttr('leader-testes','opacity','0');
+    setAttr('dot-liver','opacity','0');
+    setAttr('dot-testes','opacity','0');
+    setDisplay('lbl-liver-box','none');
+    document.querySelectorAll('.aas-callout').forEach(el=>el.classList.add('visible'));
+    setAttr('aas-callout-lines','opacity','1');
+    setAttr('leader-aas-liver','stroke',ORGAN_DAMAGED);
+    setAttr('leader-aas-testes','stroke',ORGAN_DAMAGED);
+    setAttr('dot-aas-liver','fill',ORGAN_DAMAGED);
+    setAttr('dot-aas-testes','fill',ORGAN_DAMAGED);
+    // 간 라벨
+    const ls=document.getElementById('lbl-liver-status');
+    const ld=document.getElementById('lbl-liver-detail');
+    const lb=document.getElementById('lbl-liver-box');
+    if(ls){ls.style.color=ORGAN_DAMAGED; ls.textContent='ENDOCRINE SUPPRESSION';}
+    if(ld){ld.textContent='고환 위축 / 정자 수 감소';}
+    if(lb){lb.style.borderColor=ORGAN_DAMAGED; lb.style.boxShadow='0 0 10px rgba(245,158,11,.3)';}
+  }
 }
 function selectSub(el){
   document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active','danger'));
   if(selectedSub===el.dataset.sub){selectedSub=null;}
   else{selectedSub=el.dataset.sub;el.classList.add('active','danger');}
 }
+// ── 약물별 데이터 ──
+const DRUG_DATA = {
+  AAS_oral: {
+    ratio: 9.33,
+    ratioLabel: '1의 이득 = 9.33배의 신체 손해',
+    gains: [
+      {name:'벤치프레스',val:'+20.5%',up:true},
+      {name:'스쿼트',val:'+21.0%',up:true},
+      {name:'파워 출력',val:'+3.6%',up:true},
+      {name:'VO₂max',val:'+7.5%',up:true},
+      {name:'근육량',val:'+6.3%',up:true},
+    ],
+    losses: [
+      {name:'고환 크기',val:'−26.7%',up:false},
+      {name:'정자 수',val:'−67.7%',up:false},
+      {name:'ALT (간 효소)',val:'+157.5%',up:false},
+      {name:'AST (간 효소)',val:'+122.5%',up:false},
+      {name:'HDL 콜레스테롤',val:'−23.6%',up:false},
+    ],
+    clinical: [
+      {name:'비정상적 공격성',val:'53%',col:'#ff5500'},
+      {name:'성욕 변화',val:'40%',col:'#ffaa00'},
+      {name:'여드름 발생',val:'20%',col:'#ffcc00'},
+      {name:'두통',val:'27%',col:'#ffaa00'},
+      {name:'탈모',val:'13%',col:'#ffdd44'},
+    ]
+  },
+  EPO: {
+    ratio: 2.17,
+    ratioLabel: '1의 이득 = 2.17배의 신체 손해',
+    gains: [
+      {name:'헤모글로빈',val:'+12.9%',up:true},
+      {name:'헤마토크릿',val:'+9.5%',up:true},
+      {name:'VO₂max',val:'+5.7%',up:true},
+      {name:'Power output',val:'+6.5%',up:true},
+      {name:'젖산 축적',val:'−14.9%',up:true},
+    ],
+    losses: [
+      {name:'피브리노겐',val:'−7.6%',up:false},
+      {name:'iCAM (면역조절)',val:'−6.9%',up:false},
+      {name:'vCAM (면역조절)',val:'−2.9%',up:false},
+      {name:'E-selectin (염증)',val:'+9.2%',up:false},
+    ],
+    clinical: [
+      {name:'수명 중 사망',val:'22%',col:'#ff4444'},
+      {name:'시합 중 사망',val:'29%',col:'#ff3300'},
+      {name:'심장질환 사망',val:'49%',col:'#cc0000'},
+    ]
+  }
+};
+
+function renderEffects(r){
+  const data = DRUG_DATA[selectedSub];
+  if(!data) return;
+  const panel = document.getElementById('effect-panel');
+  panel.classList.add('visible');
+
+  // 생체 부채 지수 표시
+  const ratioEl = document.getElementById('debt-ratio-num');
+  const labelEl = document.getElementById('debt-ratio-label');
+  ratioEl.textContent = data.ratio + 'x';
+  labelEl.textContent = data.ratioLabel;
+
+  // 이득 목록
+  const gainsEl = document.getElementById('effect-gains');
+  gainsEl.innerHTML = data.gains.map(g=>`
+    <div class="effect-row">
+      <span class="effect-name">${g.name}</span>
+      <span class="effect-val ${g.up?'up':'down'}">${g.val}</span>
+    </div>`).join('');
+
+  // 손해 목록
+  const lossesEl = document.getElementById('effect-losses');
+  lossesEl.innerHTML = data.losses.map(g=>`
+    <div class="effect-row">
+      <span class="effect-name">${g.name}</span>
+      <span class="effect-val down">${g.val}</span>
+    </div>`).join('');
+
+  // 임상 위험 지표
+  const clinEl = document.getElementById('clinical-content');
+  clinEl.innerHTML = '<div class="clinical-list">' +
+    data.clinical.map(c=>`
+      <div class="clinical-row">
+        <span class="clinical-name">${c.name}</span>
+        <span class="clinical-pct" style="color:${c.col}">${c.val}</span>
+      </div>`).join('') +
+    '</div>';
+}
+
 function gradeInfo(t){
   if(t<20)return{label:'낮음 (LOW)',bg:'#0a2a0a',col:'#44cc44'};
   if(t<40)return{label:'보통 (MODERATE)',bg:'#1a2a00',col:'#aadd00'};
@@ -418,8 +1038,8 @@ function calcRisk(){
   const durM=Math.min(1+dur/26,2.2);
   const ageFactor=age<22?1.3:age>35?1.1:1.0;
   const base={cv:0,hep:0,endo:0,renal:0,neuro:0};
-  if(selectedSub==='AAS_oral'){base.hep+=55;base.cv+=40;base.endo+=70;base.neuro+=10;}
-  if(selectedSub==='EPO'){base.cv+=70;base.renal+=30;base.hep+=5;base.neuro+=15;}
+  if(selectedSub==='AAS_oral'){base.hep+=65;base.endo+=80;base.cv+=8;base.neuro+=10;}
+  if(selectedSub==='EPO'){base.cv+=75;base.renal+=35;base.neuro+=15;}
   const apply=v=>Math.min(Math.round(v*durM*ageFactor),99);
   const r={};for(const k in base)r[k]=apply(base[k]);
   r.total=Math.min(Math.round((r.cv*.35+r.hep*.20+r.endo*.20+r.renal*.15+r.neuro*.10)*1.05),99);
@@ -430,26 +1050,16 @@ function calcRisk(){
 function simulate(){
   const r=calcRisk();
   if(!r){alert('약물을 하나 선택해주세요.');return;}
-  const g=gradeInfo(r.total);
-  document.getElementById('debt-score').textContent=r.total;
+  const bdiVal = selectedSub==='AAS_oral' ? 9.33 : selectedSub==='EPO' ? 2.17 : r.total;
+  const g=gradeInfo(bdiVal >= 5 ? 80 : bdiVal >= 2 ? 50 : 30);
+  document.getElementById('debt-score').textContent=bdiVal;
   document.getElementById('debt-score').style.color=g.col;
   const dg=document.getElementById('debt-grade');
   dg.textContent=g.label;dg.style.background=g.bg;dg.style.color=g.col;
-  const bars={cv:r.cv,hep:r.hep,endo:r.endo,renal:r.renal,neuro:r.neuro};
-  for(const[k,v]of Object.entries(bars)){
-    document.getElementById(k+'-bar').style.width=v+'%';
-    document.getElementById(k+'-val').textContent=v+'%';
-  }
-  const cvR=Math.min(Math.round(r.cv*.78),95);
-  const cvG=gradeInfo(cvR),mG=gradeInfo(r.mort);
-  document.getElementById('cv-risk-val').textContent=cvR+'%';
-  document.getElementById('cv-risk-val').style.color=cvG.col;
-  document.getElementById('cv-risk-sub').textContent=`위험비 ${(cvR/22).toFixed(1)}배`;
-  document.getElementById('mort-val').textContent=r.mort+'%';
-  document.getElementById('mort-val').style.color=mG.col;
-  document.getElementById('mort-sub').textContent=`위험비 ${(r.mort/9).toFixed(1)}배`;
+
   document.getElementById('idle-hint').style.display='none';
   updateOrganColors(r);
+  renderEffects(r);
 
   // 커리어 손실 바
   const useW = r.dur;
@@ -498,26 +1108,38 @@ function simulate(){
 function resetAll(){
   selectedSub=null;
   document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active','danger'));
-  document.getElementById('debt-score').textContent='—';
-  document.getElementById('debt-score').style.color='#2a4aff';
-  const dg=document.getElementById('debt-grade');
-  dg.textContent='시뮬레이션 전';dg.style.background='#1e2d55';dg.style.color='#5a7aaa';
-  ['cv','hep','endo','renal','neuro'].forEach(k=>{
-    document.getElementById(k+'-bar').style.width='0%';
-    document.getElementById(k+'-val').textContent='—';
-  });
-  document.getElementById('cv-risk-val').textContent='—';
-  document.getElementById('cv-risk-val').style.color='#2a4aff';
-  document.getElementById('cv-risk-sub').textContent='위험비 —';
-  document.getElementById('mort-val').textContent='—';
-  document.getElementById('mort-val').style.color='#2a4aff';
-  document.getElementById('mort-sub').textContent='위험비 —';
-  isSimulated=false;
-  document.getElementById('idle-hint').style.display='block';
-  document.getElementById('tl-content').innerHTML='<div class="tl-empty">시뮬레이션을 실행하면 커리어 손실 기간이 표시됩니다</div>';
   restoreHealthyOrgans();
+  setText('debt-score','—');
+  setEl('debt-score','color','#2a4aff');
+  const dg=document.getElementById('debt-grade');
+  if(dg){dg.textContent='시뮬레이션 전';dg.style.background='#1e2d55';dg.style.color='#5a7aaa';}
+
+  ['cv','hep','endo','renal','neuro'].forEach(k=>{
+    const bar=document.getElementById(k+'-bar');
+    const val=document.getElementById(k+'-val');
+    if(bar) bar.style.width='0%';
+    if(val) val.textContent='—';
+  });
+  setText('cv-risk-val','—');
+  setEl('cv-risk-val','color','#2a4aff');
+  setText('cv-risk-sub','위험비 —');
+  setText('mort-val','—');
+  setEl('mort-val','color','#2a4aff');
+  setText('mort-sub','위험비 —');
+  isSimulated=false;
+  const idle=document.getElementById('idle-hint');
+  if(idle) idle.style.display='block';
+  const effectPanel=document.getElementById('effect-panel');
+  if(effectPanel) effectPanel.classList.remove('visible');
+  const clinical=document.getElementById('clinical-content');
+  if(clinical) clinical.innerHTML='<div style="font-size:10px;color:#3a4d6a;text-align:center;padding:8px 0">시뮬레이션 후 표시</div>';
+  const tl=document.getElementById('tl-content');
+  if(tl) tl.innerHTML='<div class="tl-empty">시뮬레이션을 실행하면 커리어 손실 기간이 표시됩니다</div>';
 }
-window.addEventListener('DOMContentLoaded',restoreHealthyOrgans);
+window.addEventListener('DOMContentLoaded',()=>{
+  restoreHealthyOrgans(false);
+  window.addEventListener('resize',()=>drawMedicalBody(lastCanvasRisk));
+});
 </script>
 </body>
 </html>
