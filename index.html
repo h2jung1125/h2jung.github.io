@@ -10,8 +10,8 @@
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#050810;height:100vh;padding:10px;display:flex;flex-direction:column;align-items:center;overflow:hidden}
   h1{color:#4a7aff;font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;text-align:center;flex-shrink:0}
   .subtitle{font-size:10px;color:#3a5a88;text-align:center;margin-bottom:5px;flex-shrink:0}
-  .dash{display:grid;grid-template-columns:250px 1fr 230px;grid-template-rows:1fr auto;gap:8px;width:100%;max-width:1200px;background:#0a0e1a;border-radius:12px;padding:10px;color:#e0e8ff;flex:1;min-height:0}
-  .career-panel{grid-column:1/-1;background:#070d1f;border:1px solid #2a3a66;border-radius:10px;padding:14px 18px}
+  .dash{display:grid;grid-template-columns:250px 1fr 230px;grid-template-rows:minmax(0,1fr) 150px;gap:8px;width:100%;max-width:1200px;background:#0a0e1a;border-radius:12px;padding:10px;color:#e0e8ff;flex:1;min-height:0}
+  .career-panel{grid-column:1/-1;background:#070d1f;border:1px solid #2a3a66;border-radius:10px;padding:12px 18px;min-height:0;overflow:hidden}
   .panel{background:#0f1628;border:1px solid #1e2d55;border-radius:8px;padding:10px;overflow-y:auto;min-height:0}
   .panel-title{font-size:10px;font-weight:600;letter-spacing:.12em;color:#4a7aff;text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #1e2d55}
   label{font-size:11px;color:#7a9acc;display:block;margin-bottom:2px;margin-top:6px}
@@ -33,6 +33,11 @@
   .body-container{position:relative;flex:1;min-height:0;background:radial-gradient(circle at 50% 42%,rgba(15,118,170,.18),rgba(6,12,26,.70) 42%,#030712 78%);border-radius:8px;border:1px solid #1e2d55;overflow:hidden;box-shadow:inset 0 0 40px rgba(32,180,255,.08)}
   .body-container::before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(rgba(88,166,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(88,166,255,.045) 1px,transparent 1px);background-size:28px 28px;mask-image:radial-gradient(circle at center,#000 30%,transparent 78%);pointer-events:none}
   .body-container::after{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 72%,rgba(74,122,255,.16),transparent 38%);pointer-events:none}
+  .body-photo-stack{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .state-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;opacity:0;filter:drop-shadow(0 0 18px rgba(32,180,255,.16));transition:opacity 1.6s ease}
+  .state-photo.active{opacity:1}
+  .body-container.photo-mode #body-svg{display:none!important}
+  .body-container.photo-mode .organ-label{display:none!important}
   .idle-hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:#2a3d6a;white-space:nowrap;pointer-events:none}
 
   /* 장기 라벨 박스 */
@@ -60,7 +65,7 @@
 
   /* 커리어 손실 */
   .career-title{font-size:11px;font-weight:700;letter-spacing:.16em;color:#6a8acc;text-transform:uppercase;margin-bottom:10px}
-  .tl-main{display:flex;align-items:stretch;gap:14px}
+  .tl-main{display:flex;align-items:stretch;gap:14px;height:92px}
   .tl-bar-col{flex:1;min-width:0}
   .tl-bar{display:flex;height:80px;border-radius:8px;overflow:hidden;gap:3px}
   .tl-seg{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;padding:6px 10px;overflow:hidden;flex-shrink:0}
@@ -71,12 +76,12 @@
   .seg-use  {background:linear-gradient(160deg,#1a0e2e,#2e1d4a);border:1px solid #3a2a66}
   .seg-ban  {background:linear-gradient(160deg,#3a0000,#8a0a0a);border:1px solid #cc2222}
   .seg-organ{background:linear-gradient(160deg,#2a1500,#7a4200);border:1px solid #cc7700}
-  .tl-total-box{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1a0505,#3a0a0a);border:2px solid #ff4400;border-radius:10px;padding:12px 22px;flex-shrink:0;min-width:120px}
+  .tl-total-box{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1a0505,#3a0a0a);border:2px solid #ff4400;border-radius:10px;padding:8px 20px;flex-shrink:0;min-width:120px}
   .tl-total-flag{font-size:22px;line-height:1}
   .tl-total-label{font-size:9px;font-weight:700;color:#ff8844;letter-spacing:.1em;text-transform:uppercase;margin-top:5px}
   .tl-total-years{font-size:30px;font-weight:900;color:#ff3300;line-height:1;margin-top:3px}
   .tl-total-sub{font-size:10px;color:#aa5522;margin-top:3px}
-  .tl-empty{display:flex;align-items:center;justify-content:center;height:80px;border-radius:8px;background:#060c1a;border:1px dashed #1e2d55;font-size:11px;color:#2a3d6a}
+  .tl-empty{display:flex;align-items:center;justify-content:center;height:92px;border-radius:8px;background:#060c1a;border:1px dashed #1e2d55;font-size:11px;color:#2a3d6a}
 
 
   /* ── 이득/손해 카드 ── */
@@ -159,7 +164,7 @@
 
 <!-- 중앙: 인체 리스크 매핑 -->
 <div class="center-col">
-  <div class="body-container" id="body-container">
+  <div class="body-container photo-mode" id="body-container">
 
     <!-- 좌측 라벨 박스 -->
     <div class="organ-label label-left" id="lbl-heart-box" style="top:24%;left:1%">
@@ -184,6 +189,12 @@
       <div class="lbl-organ-name">TESTICULAR FUNCTION</div>
       <div class="callout-metric">고환크기 -26.7%</div>
       <div class="callout-metric">정자 수 -67.7%</div>
+    </div>
+
+    <div class="body-photo-stack" id="body-photo-stack" aria-label="Medical body state image">
+      <img class="state-photo active" id="photo-base" src="1.png?v=20260611-1420" alt="기본 신체 상태">
+      <img class="state-photo" id="photo-aas" src="2.png?v=20260611-1420" alt="AAS 선택 상태">
+      <img class="state-photo" id="photo-epo" src="3.png?v=20260611-1420" alt="EPO 선택 상태">
     </div>
 
     <!-- SVG: 해부학 정밀 라인아트 -->
@@ -738,6 +749,12 @@ function setAttr(id, attr, val){
 }
 function setText(id, val){ const el=document.getElementById(id); if(el) el.textContent=val; }
 function setDisplay(id, val){ const el=document.getElementById(id); if(el) el.style.display=val; }
+function setPhotoState(state='base'){
+  ['base','aas','epo'].forEach(name=>{
+    const el=document.getElementById('photo-'+name);
+    if(el) el.classList.toggle('active', name===state);
+  });
+}
 
 function setSvgTransitionSpeed(seconds=2.6){
   document.querySelectorAll('#body-svg [style*="transition"]').forEach(el=>{
@@ -800,6 +817,7 @@ function drawMedicalBody(risk=null){
 
 function restoreHealthyOrgans(animate=true){
   isSimulated = false;
+  setPhotoState('base');
   setSvgTransitionSpeed(2.6);
   document.querySelectorAll('.aas-callout').forEach(el=>el.classList.remove('visible'));
   setAttr('aas-callout-lines','opacity','0');
@@ -868,6 +886,7 @@ function updateOrganColors(r){
   isSimulated = true;
 
   if(selectedSub === 'EPO'){
+    setPhotoState('epo');
     // 심장·혈관 → 보라
     setGradientStops('grad-heart-h', ['#c4b5fd','#8B5CF6','#3b0764'], true);
     setAttr('heart','fill','url(#grad-heart-h)');
@@ -896,6 +915,7 @@ function updateOrganColors(r){
   }
 
   if(selectedSub === 'AAS_oral'){
+    setPhotoState('aas');
     // 간·고환 → 주황
     setGradientStops('grad-liver-h', ['#fde68a','#F59E0B','#78350f'], true);
     setGradientStops('grad-testes-h', ['#fde68a','#d97706'], true);
